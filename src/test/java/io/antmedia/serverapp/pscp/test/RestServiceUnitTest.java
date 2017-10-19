@@ -16,9 +16,10 @@ import com.google.gson.Gson;
 import io.antmedia.datastore.db.IDataStore;
 import io.antmedia.datastore.db.MongoStore;
 import io.antmedia.datastore.db.types.Broadcast;
+import io.antmedia.rest.BroadcastRestService;
+import io.antmedia.rest.BroadcastRestService.Result;
 import io.antmedia.serverapp.pscp.Application;
-import io.antmedia.serverapp.pscp.BroadcastRestService;
-import io.antmedia.serverapp.pscp.BroadcastRestService.Result;
+
 
 @ContextConfiguration(locations = { 
 		"/WEB-INF/red5-web.xml" 

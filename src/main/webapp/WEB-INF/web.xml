@@ -35,7 +35,7 @@
 		</servlet-class>
     <init-param>
       <param-name>com.sun.jersey.config.property.packages</param-name>
-      <param-value>io.antmedia.serverapp.pscp</param-value>
+      <param-value>io.antmedia.rest</param-value>
     </init-param>
     <init-param>
       <param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>

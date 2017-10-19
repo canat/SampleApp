@@ -1,0 +1,417 @@
+<!doctype html>
+<!--
+  Material Design Lite
+  Copyright 2015 Google Inc. All rights reserved.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      https://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License
+-->
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Introducing Lollipop, a sweet new take on Android.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <title>Android</title>
+
+    <!-- Page styles -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+    #view-source {
+      position: fixed;
+      display: block;
+      right: 0;
+      bottom: 0;
+      margin-right: 40px;
+      margin-bottom: 40px;
+      z-index: 900;
+    }
+    </style>
+  </head>
+  <body>
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+
+      <div class="android-header mdl-layout__header mdl-layout__header--waterfall">
+        <div class="mdl-layout__header-row">
+          <span class="android-title mdl-layout-title logo-font">
+
+            <img class="android-logo-image" src="images/WebRTC.png">
+          </span>
+          <!-- Add spacer, to align navigation to the right in desktop -->
+          <div class="android-header-spacer mdl-layout-spacer"></div>
+          <!-- Navigation -->
+          <div class="android-navigation-container">
+            <nav class="android-navigation mdl-navigation">
+              <a class="mdl-navigation__link mdl-typography--text-uppercase" href="">Blog</a>
+              <a class="mdl-navigation__link mdl-typography--text-uppercase" href="">Contact</a>
+            </nav>
+          </div>
+          <span class="android-mobile-title mdl-layout-title">
+            <!--
+            <img class="android-logo-image" src="images/android-logo.png">
+          -->
+          </span>
+
+        </div>
+      </div>
+
+      <div class="android-content mdl-layout__content">
+        <a name="top"></a>
+
+        <div class="android-be-together-section mdl-typography--text-center">
+
+                  <div class="logo-font android-sub-slogan">Publish live your webcam to Facebook, Youtube and Periscope at the same time</div>
+
+          <table style="margin-left:auto;margin-right:auto;margin-bottom:24px"class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">
+
+          <tbody>
+            <tr>
+              <td><button class="mdl-button mdl-js-button mdl-button--primary" id="facebook-button"
+                onclick="fetchDeviceAuthParameters('facebook')">
+  Enable Facebook
+</button></td>
+              <td><button class="mdl-button mdl-js-button mdl-button--primary" id="youtube-button"
+                onclick="fetchDeviceAuthParameters('youtube')">
+  Enable Youtube
+</button></td>
+              <td><button class="mdl-button mdl-js-button mdl-button--primary" id="periscope-button"
+                onclick="fetchDeviceAuthParameters('periscope')">
+  Enable Periscope
+</button></td>
+            </tr>
+          </tbody>
+        </table>
+
+          <div class="logo-font">
+          	<video id="localVideo" autoplay muted width="640"></video>
+          </div>
+
+
+        </div>
+
+
+        <footer class="android-footer mdl-mega-footer">
+          <div class="mdl-mega-footer--top-section">
+
+            <div class="mdl-mega-footer--right-section">
+              <a class="mdl-typography--font-light" href="#top">
+                Back to Top
+                <i class="material-icons">expand_less</i>
+              </a>
+            </div>
+          </div>
+
+          <div class="mdl-mega-footer--middle-section">
+            <p class="mdl-typography--font-light">Satellite imagery: © 2014 Astrium, DigitalGlobe</p>
+          </div>
+
+          <div class="mdl-mega-footer--bottom-section">
+            <a class="android-link mdl-typography--font-light" href="http://antmedia.io/blog">Blog</a>
+            <a class="android-link mdl-typography--font-light" href="http://antmedia.io/#contact">Contact</a>
+          </div>
+
+        </footer>
+      </div>
+    </div>
+    <dialog class="mdl-dialog" id="authenticateDialog">
+       <h4 class="mdl-dialog__title">Authenticate</h4>
+       <div class="mdl-dialog__content">
+           Please enter this code: <div style="display:inline;font-weight:bold" id="user_code"></div>
+           to this url: <div style="display:inline" id="verification_url"></div>
+       </div>
+       <div class="mdl-dialog__actions">
+           <button type="button" class="mdl-button ok">OK</button>
+           <button type="button" class="mdl-button close">Cancel</button>
+       </div>
+   </dialog>
+   <dialog class="mdl-dialog" id="loadingDialog">
+      <div id="p2" class="mdl-progress mdl-js-progress mdl-progress__indeterminate"></div>
+   </dialog>
+    <script src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+    <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+    <script>
+      var dialog = document.querySelector('#authenticateDialog');
+      var loadingDialog = document.querySelector('#loadingDialog');
+
+      var serviceNameActive;
+
+      dialog.querySelector('.ok').addEventListener('click', function () {
+           checkCount = 0;
+
+           askDeviceAuthStatus(serviceNameActive, true);
+           dialog.close();
+       });
+
+	var pc_config = {
+		'iceServers' : [ {
+			'url' : 'stun:stun.l.google.com:19302'
+		} ]
+	};
+
+	var pcConstraints = {
+		"optional" : [ {
+			"DtlsSrtpKeyAgreement" : true
+		} ]
+	};
+
+	var sdpConstraints = {
+		'mandatory' : {
+			'OfferToReceiveAudio' : false,
+			'OfferToReceiveVideo' : false
+		}
+	};
+
+	var localStream;
+
+	/* Yerel ve Uzak uç birimler arasında bağlantı kurmamızı
+	 sağlayacak nesne
+	 */
+	var remotePeerConnection;
+
+	/* videoları çalacak nesneler
+	 */
+
+	var localVideo = document.getElementById("localVideo");
+
+	var streamNameBox = document.getElementById("streamName");
+
+	function Start() {
+
+		var jsCmd;
+		{
+			jsCmd = {
+				command : "publish",
+				streamName : streamNameBox.value,
+			};
+		}
+
+		wsConn.send(JSON.stringify(jsCmd));
+	}
+
+	function Stop() {
+
+		var jsCmd;
+		{
+			jsCmd = {
+				command : "stop",
+			};
+		}
+
+		wsConn.send(JSON.stringify(jsCmd));
+
+		if (typeof remotePeerConnection != "undefined"
+				&& remotePeerConnection.signalingState != "closed") {
+			remotePeerConnection.close();
+		}
+
+	}
+
+	function gotStream(stream) {
+
+		localVideo.srcObject = stream;
+		localStream = stream;
+	}
+
+	function gotDescription(configuration) {
+		remotePeerConnection.setLocalDescription(configuration);
+
+		jsCmd = {
+			command : "takeConfiguration",
+			type : configuration.type,
+			sdp : configuration.sdp
+
+		};
+
+		wsConn.send(JSON.stringify(jsCmd));
+		console.log("yerel configuration alindi. ", configuration);
+	}
+
+	function startAnimation() {
+
+		$("#broadcastingInfo").fadeIn(800, function(){
+				$("#broadcastingInfo").fadeOut(800, function(){
+					if (remotePeerConnection.signalingState != "closed") {
+						startAnimation();
+					}
+				});
+	});
+
+	}
+	var wsConn;
+	if ("WebSocket" in window) {
+		wsConn = new WebSocket("ws://"+location.hostname+":8081/WebRTCApp");
+
+		wsConn.onopen = function() {
+			console.log("websocket connected");
+		}
+
+		wsConn.onmessage = function(event) {
+			obj = JSON.parse(event.data);
+			console.log(event.data);
+			if (obj.command == "start") {
+				if (typeof localStream != "undefined") {
+					remotePeerConnection = new RTCPeerConnection(pc_config,
+							pcConstraints);
+					remotePeerConnection.addStream(localStream);
+
+					remotePeerConnection.createOffer(gotDescription,
+							function() {
+								console.log("create offer error");
+							}, sdpConstraints);
+				}
+
+			}
+			if (obj.command == "takeCandidate") {
+
+				var candidate = new RTCIceCandidate({
+					sdpMLineIndex : obj.label,
+					candidate : obj.candidate
+				});
+				remotePeerConnection.addIceCandidate(candidate);
+				console.log("received ice candidate");
+				console.log(obj.candidate);
+			} else if (obj.command == "takeConfiguration") {
+
+				remotePeerConnection
+						.setRemoteDescription(new RTCSessionDescription({
+							sdp : obj.sdp,
+							type : obj.type
+						}));
+				console.log("received remote description:")
+				console.log(obj.sdp);
+
+				startAnimation();
+
+			}
+
+		}
+
+		wsConn.onerror = function(hata) {
+			console.log(" error occured: " + hata);
+		}
+
+		wsConn.onclose = function(olay) {
+			console.log("connection closed.");
+		}
+
+	} else {
+		alert("Your browser does not support WebSocket. You may want to use Chrome or Firefox");
+	}
+
+   function showLoader() {
+      loadingDialog.showModal();
+   }
+
+   function hideLoader() {
+     loadingDialog.close();
+   }
+
+  function fetchDeviceAuthParameters(serviceName) {
+          showLoader();
+          serviceNameActive = serviceName;
+          fetch('rest/broadcast/getDeviceAuthParameters/' + serviceName,
+              {
+                  method: 'post',
+                  headers: {
+                      "Content-type": "application/json"
+                  },
+              }
+          ).then(
+              function (response) {
+                  if (response.status !== 200) {
+                      console.log('Looks like there was a problem. Status Code: ' +
+                          response.status);
+                      return;
+                  }
+
+                   hideLoader();
+                  // Examine the text in the response
+                  response.json().then(function (data) {
+                      console.log(data.device_code);
+                      document.getElementById("user_code").innerHTML = data.user_code;
+                      document.getElementById("verification_url").innerHTML = '<a target="blank" href="http://'+data.verification_url+'">' + data.verification_url + '</a>';
+                      dialog.showModal();
+
+                  });
+              }
+              )
+              .catch(function (err) {
+                  console.log('Fetch Error :-S', err);
+              });
+      }
+
+      function askDeviceAuthStatus(serviceName, askagain) {
+            showLoader();
+           fetch('rest/broadcast/checkDeviceAuthStatus/' + serviceName,
+               {
+                   method: 'post',
+                   headers: {
+                       "Content-type": "application/json"
+                   },
+               }
+           ).then(
+               function (response) {
+                   if (response.status !== 200) {
+                       console.log('Looks like there was a problem. Status Code: ' +
+                           response.status);
+                       return;
+                   }
+
+
+                   // Examine the text in the response
+                   response.json().then(function (data) {
+                       console.log("status of service auth " + data.success);
+                       if (data.success == true) {
+                           hideLoader();
+                           if (serviceName == "facebook") {
+                               document.getElementById("facebook-button").innerText = "Facebook Enabled";
+                           }
+                           else if (serviceName == "youtube") {
+                               document.getElementById("youtube-button").innerText = "Youtube Enabled";
+                           }
+                           else if (serviceName == "periscope") {
+                               periscopeEnabled = true;
+                               document.getElementById("periscope-button").innerText = "Periscope Enabled";
+                           }
+                       }
+                       else {
+                           if (askagain) {
+                             console.log("not authenticated");
+                             setTimeout(askDeviceAuthStatus(serviceNameActive, true), 5000);
+                           }
+                           else {
+                             hideLoader();
+                           }
+                       }
+
+                   });
+
+               }
+               )
+               .catch(function (err) {
+                   console.log('Fetch Error :-S', err);
+               });
+       }
+
+	navigator.getUserMedia({
+		video : true,
+		audio : true
+	}, gotStream, function(error) {
+		console.log(" getUserMedia hatası: ", error);
+	});
+    </script>
+  </body>
+</html>

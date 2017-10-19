@@ -27,6 +27,7 @@ public class HttpForwardFilter implements javax.servlet.Filter {
 			FilterChain chain) throws IOException, ServletException {
 		String requestURI = ((HttpServletRequest)request).getRequestURI();
 
+		/*
 		File f = new File("webapps/"+ requestURI);
 		if (!f.exists()) 
 		{
@@ -35,6 +36,7 @@ public class HttpForwardFilter implements javax.servlet.Filter {
 			httpResponse.sendRedirect(redirectUri);
 			return;
 		}
+		*/
 		chain.doFilter(request, response);
 	}
 

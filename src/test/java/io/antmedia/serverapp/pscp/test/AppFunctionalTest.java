@@ -8,15 +8,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.red5.server.adapter.AntMediaApplicationAdapter;
 
 import io.antmedia.datastore.db.types.Broadcast;
+import io.antmedia.rest.BroadcastRestService;
+import io.antmedia.rest.BroadcastRestService.Result;
 import io.antmedia.serverapp.pscp.Application;
-import io.antmedia.serverapp.pscp.BroadcastRestService;
-import io.antmedia.serverapp.pscp.BroadcastRestService.Result;
 
 
 public class AppFunctionalTest {
@@ -55,6 +58,15 @@ public class AppFunctionalTest {
 		
 		System.out.println("broadcast id:" + broadcast.getStreamId());
 		
+		
+	}
+	
+	@Test
+	public void testSendEndLiveStreamToThirdparty() {
+		String url = "http://10.2.42.238/ant-media-space/admin//listenerHookURL.php";
+		StringBuffer notifyHook = AntMediaApplicationAdapter.notifyHook(url, "809630328345580383813514",
+				AntMediaApplicationAdapter.HOOK_ACTION_END_LIVE_STREAM);
+		System.out.println("Result: " + notifyHook.toString());
 		
 	}
 

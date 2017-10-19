@@ -35,8 +35,8 @@ import org.junit.Test;
 import com.google.gson.Gson;
 
 import io.antmedia.datastore.db.types.Broadcast;
-import io.antmedia.serverapp.pscp.BroadcastRestService;
-import io.antmedia.serverapp.pscp.BroadcastRestService.Result;
+import io.antmedia.rest.BroadcastRestService;
+import io.antmedia.rest.BroadcastRestService.Result;
 import io.antmedia.social.endpoint.VideoServiceEndpoint.DeviceAuthParameters;
 
 
