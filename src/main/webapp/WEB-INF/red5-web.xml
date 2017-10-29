@@ -45,7 +45,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
 	 -->
 	 
 	 
-	<bean id="db.datastore" class="io.antmedia.datastore.db.InMemoryDataStore">
+	<bean id="db.datastore" class="io.antmedia.datastore.db.MapDBStore">
 		<constructor-arg value="${webapp.dbName}" />
 	</bean>
 	 
