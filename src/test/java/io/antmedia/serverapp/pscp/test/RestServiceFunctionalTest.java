@@ -9,6 +9,7 @@ import static org.junit.Assert.fail;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ import org.junit.Test;
 import com.google.gson.Gson;
 
 import io.antmedia.datastore.db.types.Broadcast;
+import io.antmedia.datastore.db.types.Endpoint;
 import io.antmedia.rest.BroadcastRestService;
 import io.antmedia.rest.BroadcastRestService.Result;
 import io.antmedia.social.endpoint.VideoServiceEndpoint.DeviceAuthParameters;
@@ -43,8 +45,13 @@ import io.antmedia.social.endpoint.VideoServiceEndpoint.DeviceAuthParameters;
 public class RestServiceFunctionalTest {
 
 
-	private static final String ROOT_URL = "http://localhost:5080/PSCP/rest";
+	private static final String ROOT_APP_URL = "http://localhost:5080/PSCP";
+
+	private static final String ROOT_SERVICE_URL = "http://localhost:5080/PSCP/rest";
+	private static Process tmpExec;
 	private BroadcastRestService restService = null;
+
+	Gson gson = new Gson();
 
 	@Before
 	public void before() {
@@ -62,7 +69,7 @@ public class RestServiceFunctionalTest {
 	}
 
 	public Broadcast createBroadcast(String name) {
-		String url = ROOT_URL + "/broadcast/create";
+		String url = ROOT_SERVICE_URL + "/broadcast/create";
 
 		HttpClient client = HttpClients.custom()
 				.setRedirectStrategy(new LaxRedirectStrategy())
@@ -111,7 +118,7 @@ public class RestServiceFunctionalTest {
 	@Test
 	public void testBroadcastCreateFunctionalWithoutObject() {
 
-		String url = ROOT_URL + "/broadcast/create";
+		String url = ROOT_SERVICE_URL + "/broadcast/create";
 
 		HttpClient client = HttpClients.custom()
 				.setRedirectStrategy(new LaxRedirectStrategy())
@@ -151,7 +158,7 @@ public class RestServiceFunctionalTest {
 	public void testBroadcasGetUndefined() {
 		try {
 			/// get broadcast 
-			String url = ROOT_URL + "/broadcast/get";
+			String url = ROOT_SERVICE_URL + "/broadcast/get";
 
 			CloseableHttpClient client = HttpClients.custom()
 					.setRedirectStrategy(new LaxRedirectStrategy())
@@ -197,7 +204,7 @@ public class RestServiceFunctionalTest {
 	public Broadcast getBroadcast(String streamId) {
 		try {
 			/// get broadcast 
-			String url = ROOT_URL + "/broadcast/get";
+			String url = ROOT_SERVICE_URL + "/broadcast/get";
 
 			CloseableHttpClient client = HttpClients.custom()
 					.setRedirectStrategy(new LaxRedirectStrategy())
@@ -232,11 +239,12 @@ public class RestServiceFunctionalTest {
 		return null;
 	}
 
+
 	@Test
 	public void testBroadcasGetFree() {
 		try {
 			/// get broadcast 
-			String url = ROOT_URL + "/broadcast/get";
+			String url = ROOT_SERVICE_URL + "/broadcast/get";
 
 			CloseableHttpClient client = HttpClients.custom()
 					.setRedirectStrategy(new LaxRedirectStrategy())
@@ -276,7 +284,7 @@ public class RestServiceFunctionalTest {
 	public void testBroadcasGet() {
 		try {
 
-			String url = ROOT_URL + "/broadcast/create";
+			String url = ROOT_SERVICE_URL + "/broadcast/create";
 
 			HttpClient client = HttpClients.custom()
 					.setRedirectStrategy(new LaxRedirectStrategy())
@@ -308,7 +316,7 @@ public class RestServiceFunctionalTest {
 
 
 			/// get broadcast 
-			url = ROOT_URL + "/broadcast/get";
+			url = ROOT_SERVICE_URL + "/broadcast/get";
 
 			client = HttpClients.custom()
 					.setRedirectStrategy(new LaxRedirectStrategy())
@@ -354,15 +362,91 @@ public class RestServiceFunctionalTest {
 		assertFalse(result2.success);
 	}
 
+	@Test
+	public void testDeleteVoDFile() {
+
+		try {
+			String streamName = "vod_delete_test";
+			Broadcast broadcast = createBroadcast(streamName);
+			assertNotNull(broadcast);
+			assertNotNull(broadcast.getStreamId());
+
+			Process execute = execute("/usr/local/bin/ffmpeg -re -i src/test/resources/test.flv -acodec copy "
+					+ "	-vcodec copy -f flv rtmp://localhost/PSCP/" + broadcast.getStreamId());
+
+
+			Thread.sleep(20000);
+
+			execute.destroy();
+			
+			//let mp4 file to be created
+			Thread.sleep(2000);
+
+			boolean vodExists = AppFunctionalTest.exists(ROOT_APP_URL + "/streams/" + broadcast.getStreamId() + ".mp4", false);
+
+			assertTrue(vodExists);
+
+
+			String url = ROOT_SERVICE_URL + "/broadcast/deleteVoDFile/"+ broadcast.getStreamId();
+			
+			String response = makePOSTRequest(url, null);
+
+			Result deleteVoDResponse = gson.fromJson(response.toString(), Result.class);
+			assertTrue(deleteVoDResponse.success);
+			
+			
+
+
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
+
+	}
+
+
+	public String makePOSTRequest(String url, String entity) {
+		try {
+			CloseableHttpClient client = HttpClients.custom()
+					.setRedirectStrategy(new LaxRedirectStrategy())
+					.build();
+
+
+			  RequestBuilder builder = RequestBuilder.post()
+					.setUri(url)
+					.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
+
+			  if (entity != null) {
+				  builder.setEntity(new StringEntity(entity));
+			  }
+
+			 HttpUriRequest post = builder.build();
+			CloseableHttpResponse response = client.execute(post);
+
+			StringBuffer result = readResponse(response);
+
+			if (response.getStatusLine().getStatusCode() != 200) {
+				throw new Exception(result.toString());
+			}
+			return result.toString();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
+		return null;
+	}
+
+
 	public Result deleteBroadcast(String id) {
 		try {
 			//delete broadcast
-			String url = ROOT_URL + "/broadcast/delete/"+ id;
+			String url = ROOT_SERVICE_URL + "/broadcast/delete/"+ id;
 
 			CloseableHttpClient client = HttpClients.custom()
 					.setRedirectStrategy(new LaxRedirectStrategy())
 					.build();
-			Gson gson = new Gson();
+
 
 			HttpUriRequest post = RequestBuilder.post()
 					.setUri(url)
@@ -392,7 +476,7 @@ public class RestServiceFunctionalTest {
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 
 
-		HttpPost httppost = new HttpPost(ROOT_URL + "/broadcast/updateInfo");
+		HttpPost httppost = new HttpPost(ROOT_SERVICE_URL + "/broadcast/updateInfo");
 		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 		nameValuePairs.add(new BasicNameValuePair("Content-Type","application/x-www-form-urlencoded;"));
 		nameValuePairs.add(new BasicNameValuePair("id", broadcastId));
@@ -419,7 +503,7 @@ public class RestServiceFunctionalTest {
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 
 
-		HttpPost httppost = new HttpPost(ROOT_URL + "/broadcast/updatePublishStatus");
+		HttpPost httppost = new HttpPost(ROOT_SERVICE_URL + "/broadcast/updatePublishStatus");
 		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 		nameValuePairs.add(new BasicNameValuePair("Content-Type","application/x-www-form-urlencoded;"));
 		nameValuePairs.add(new BasicNameValuePair("id", broadcastId));
@@ -481,13 +565,13 @@ public class RestServiceFunctionalTest {
 		}
 
 	}
-	
+
 	public Result addEndpoint(String broadcastId, String rtmpUrl) throws Exception 
 	{
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 
 
-		HttpPost httppost = new HttpPost(ROOT_URL + "/broadcast/addEndpoint");
+		HttpPost httppost = new HttpPost(ROOT_SERVICE_URL + "/broadcast/addEndpoint");
 		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 		nameValuePairs.add(new BasicNameValuePair("Content-Type","application/x-www-form-urlencoded;"));
 		nameValuePairs.add(new BasicNameValuePair("id", broadcastId));
@@ -513,7 +597,7 @@ public class RestServiceFunctionalTest {
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 
 
-		HttpPost httppost = new HttpPost(ROOT_URL + "/broadcast/addSocialEndpoint");
+		HttpPost httppost = new HttpPost(ROOT_SERVICE_URL + "/broadcast/addSocialEndpoint");
 		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 		nameValuePairs.add(new BasicNameValuePair("Content-Type","application/x-www-form-urlencoded;"));
 		nameValuePairs.add(new BasicNameValuePair("id", broadcastId));
@@ -534,44 +618,44 @@ public class RestServiceFunctionalTest {
 
 		return tmp;
 	}
-	
+
 	private DeviceAuthParameters getDeviceAuthParameters(String serviceName) throws Exception {
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 
 
-		HttpPost httppost = new HttpPost(ROOT_URL + "/broadcast/getDeviceAuthParameters/" + serviceName);
-	//	List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-	//	nameValuePairs.add(new BasicNameValuePair("Content-Type","application/x-www-form-urlencoded;"));
-	//	nameValuePairs.add(new BasicNameValuePair("serviceName", serviceName));
-	//	httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs, StandardCharsets.UTF_8));
+		HttpPost httppost = new HttpPost(ROOT_SERVICE_URL + "/broadcast/getDeviceAuthParameters/" + serviceName);
+		//	List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+		//	nameValuePairs.add(new BasicNameValuePair("Content-Type","application/x-www-form-urlencoded;"));
+		//	nameValuePairs.add(new BasicNameValuePair("serviceName", serviceName));
+		//	httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs, StandardCharsets.UTF_8));
 
 
 		CloseableHttpResponse response = httpclient.execute(httppost);
-		
+
 		StringBuffer result = readResponse(response);
 
 		if (response.getStatusLine().getStatusCode() != 200) {
 			throw new Exception(result.toString());
 		}
-		
-		
+
+
 		Gson gson = new Gson();
 		System.out.println("result string: " + result.toString());
 		DeviceAuthParameters tmp = gson.fromJson(result.toString(), DeviceAuthParameters.class);
 
 		return tmp;
-		
+
 	}
-	
+
 	private Result checkDeviceAuthStatus(String serviceName) throws Exception {
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 
 
-		HttpPost httppost = new HttpPost(ROOT_URL + "/broadcast/checkDeviceAuthStatus/" + serviceName);
-	//	List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-	//	nameValuePairs.add(new BasicNameValuePair("Content-Type","application/x-www-form-urlencoded;"));
-	//	nameValuePairs.add(new BasicNameValuePair("serviceName", serviceName));
-	//	httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs, StandardCharsets.UTF_8));
+		HttpPost httppost = new HttpPost(ROOT_SERVICE_URL + "/broadcast/checkDeviceAuthStatus/" + serviceName);
+		//	List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+		//	nameValuePairs.add(new BasicNameValuePair("Content-Type","application/x-www-form-urlencoded;"));
+		//	nameValuePairs.add(new BasicNameValuePair("serviceName", serviceName));
+		//	httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs, StandardCharsets.UTF_8));
 
 
 		CloseableHttpResponse response = httpclient.execute(httppost);
@@ -586,11 +670,125 @@ public class RestServiceFunctionalTest {
 		Result tmp = gson.fromJson(result.toString(), Result.class);
 
 		return tmp;
-		
+
 	}
-	
+
 	//TODO: restart server after testAddEndpoint and 
 	// check that social endpoints are added correctly 
+
+
+	@Test
+	public void testCheckSocialEndpointRecreated() {
+		Result result;
+		try {
+			//create broadcast
+			Broadcast broadcast = createBroadcast("social_endpoint_check");
+			//add facebook endpoint
+
+
+			result = addSocialEndpoint(broadcast.getStreamId().toString(), "facebook");
+
+			//check that it is successfull
+			assertTrue(result.success);
+
+
+			//add youtube endpoint
+			result = addSocialEndpoint(broadcast.getStreamId().toString(), "youtube");
+
+			//check that it is succes full
+			assertTrue(result.success);
+
+
+			//add twitter endpoint
+			result = addSocialEndpoint(broadcast.getStreamId().toString(), "periscope");
+
+			//check that it is succes full
+			assertTrue(result.success);
+
+			//get endpoint list
+			broadcast = getBroadcast(broadcast.getStreamId().toString());
+
+
+
+			//check that 3 element exist
+			assertNotNull(broadcast.getEndPointList());
+			assertEquals(broadcast.getEndPointList().size(), 3);
+
+
+
+			broadcast = getBroadcast(broadcast.getStreamId().toString());
+			List<Endpoint> endpointList = broadcast.getEndPointList();
+
+			for (Endpoint endpoint : endpointList) {
+				System.out.println("endpoint url: " + endpoint.rtmpUrl + " broadcast.id=" + endpoint.broadcastId + " stream id: " + endpoint.streamId);
+
+			}
+
+			Process execute = execute("/usr/local/bin/ffmpeg -re -i src/test/resources/test.flv -acodec copy -vcodec copy -f flv rtmp://localhost/PSCP/" + broadcast.getStreamId());
+
+			Thread.sleep(20000);
+
+			execute.destroy();
+
+			//this value is critical because server creates endpoints on social networks
+			Thread.sleep(15000);
+
+			broadcast = getBroadcast(broadcast.getStreamId().toString());
+			List<Endpoint> endpointList2 = broadcast.getEndPointList();
+			assertEquals(endpointList2.size(), 3);
+
+			for (Endpoint endpoint : endpointList2) {
+				System.out.println("new endpoint url: " + endpoint.rtmpUrl + " broadcast.id=" + endpoint.broadcastId + " stream id: " + endpoint.streamId);
+
+			}
+
+
+			for (Endpoint endpoint : endpointList2) {
+				for (Endpoint endpointFirst : endpointList) {
+					assertTrue(!endpoint.rtmpUrl.equals(endpointFirst.rtmpUrl) || !endpoint.broadcastId.equals(endpointFirst.broadcastId));
+				}
+			}
+
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
+
+	}
+
+	public static Process execute(final String command) {
+		tmpExec = null;
+		new Thread() {
+			public void run() {
+				try {
+
+					tmpExec = Runtime.getRuntime().exec(command);
+					InputStream errorStream = tmpExec.getErrorStream();
+					byte[] data = new byte[1024];
+					int length = 0;
+
+					while ((length = errorStream.read(data, 0, data.length)) > 0) {
+						System.out.println(new String(data, 0, length));
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			};
+		}.start();
+
+		while (tmpExec == null) {
+			try {
+				System.out.println("Waiting for exec get initialized...");
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return tmpExec;
+	}
+
 
 	@Test
 	public void testAddEndpoint() {
@@ -598,9 +796,9 @@ public class RestServiceFunctionalTest {
 		try {
 			//create broadcast
 			Broadcast broadcast = createBroadcast(null);
-			
+
 			updateNameAndDescription(broadcast.getStreamId().toString(), "name", "description");
-			
+
 			System.out.println("broadcast id string: " + broadcast.getStreamId().toString());
 
 			//get broadcast
@@ -611,7 +809,7 @@ public class RestServiceFunctionalTest {
 
 			//add facebook end point
 			Result result = addSocialEndpoint(broadcast.getStreamId().toString(), "facebook");
-			
+
 			//check that error returns because it is not authenticated
 			assertFalse(result.success);
 			assertNotNull(result.message);
@@ -637,17 +835,17 @@ public class RestServiceFunctionalTest {
 			System.out.println(" user code: " + deviceAuthParameters.user_code );
 			assertNotNull(deviceAuthParameters.verification_url);
 			assertNotNull(deviceAuthParameters.user_code);
-			
+
 			//ask if authenticated
 			do {
 				System.out.println("You should enter this code: " + deviceAuthParameters.user_code +
 						" to this url: " + deviceAuthParameters.verification_url);
 				System.out.println("Waiting before asking auth status");
-				
+
 				Thread.sleep(deviceAuthParameters.interval * 1000);
 				result = checkDeviceAuthStatus("facebook");
 				System.out.println("auth status is " + result.success);
-				
+
 			} while (!result.success);
 
 			//add facebook endpoint
@@ -662,18 +860,18 @@ public class RestServiceFunctionalTest {
 			System.out.println(" user code: " + deviceAuthParameters.user_code );
 			assertNotNull(deviceAuthParameters.verification_url);
 			assertNotNull(deviceAuthParameters.user_code);
-			
+
 			do {
 				System.out.println("You should enter this code: " + deviceAuthParameters.user_code +
 						" to this url: " + deviceAuthParameters.verification_url);
 				System.out.println("Waiting "+ deviceAuthParameters.interval + " seconds before asking auth status");
-				
+
 				Thread.sleep(deviceAuthParameters.interval * 1000);
 				result = checkDeviceAuthStatus("periscope");
 				System.out.println("auth status is " + result.success);
-				
+
 			} while (!result.success);
-			
+
 
 			//add twitter endpoint
 			result = addSocialEndpoint(broadcast.getStreamId().toString(), "periscope");
@@ -688,16 +886,16 @@ public class RestServiceFunctionalTest {
 			System.out.println(" user code: " + deviceAuthParameters.user_code );
 			assertNotNull(deviceAuthParameters.verification_url);
 			assertNotNull(deviceAuthParameters.user_code);
-			
+
 			do {
 				System.out.println("You should enter this code: " + deviceAuthParameters.user_code +
 						" to this url: " + deviceAuthParameters.verification_url);
 				System.out.println("Waiting "+ deviceAuthParameters.interval + " seconds before asking auth status");
-				
+
 				Thread.sleep(deviceAuthParameters.interval * 1000);
 				result = checkDeviceAuthStatus("youtube");
 				System.out.println("auth status is " + result.success);
-				
+
 			} while (!result.success);
 
 			//add youtube endpoint
@@ -734,7 +932,7 @@ public class RestServiceFunctionalTest {
 	public void testBroadcastDelete() {
 		try {
 
-			String url = ROOT_URL + "/broadcast/create";
+			String url = ROOT_SERVICE_URL + "/broadcast/create";
 
 			HttpClient client = HttpClients.custom()
 					.setRedirectStrategy(new LaxRedirectStrategy())
@@ -766,7 +964,7 @@ public class RestServiceFunctionalTest {
 
 
 			/// get broadcast 
-			url = ROOT_URL + "/broadcast/get";
+			url = ROOT_SERVICE_URL + "/broadcast/get";
 
 			client = HttpClients.custom()
 					.setRedirectStrategy(new LaxRedirectStrategy())
@@ -798,7 +996,7 @@ public class RestServiceFunctionalTest {
 
 
 			//delete broadcast
-			url = ROOT_URL + "/broadcast/delete/"+ tmp2.getStreamId().toString();
+			url = ROOT_SERVICE_URL + "/broadcast/delete/"+ tmp2.getStreamId().toString();
 
 			client = HttpClients.custom()
 					.setRedirectStrategy(new LaxRedirectStrategy())
@@ -826,7 +1024,7 @@ public class RestServiceFunctionalTest {
 
 			//get the same object
 			/// get broadcast 
-			url = ROOT_URL + "/broadcast/get";
+			url = ROOT_SERVICE_URL + "/broadcast/get";
 
 			client = HttpClients.custom()
 					.setRedirectStrategy(new LaxRedirectStrategy())
