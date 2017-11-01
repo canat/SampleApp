@@ -378,7 +378,7 @@ public class RestServiceFunctionalTest {
 			Thread.sleep(20000);
 
 			execute.destroy();
-			
+
 			//let mp4 file to be created
 			Thread.sleep(2000);
 
@@ -388,14 +388,37 @@ public class RestServiceFunctionalTest {
 
 
 			String url = ROOT_SERVICE_URL + "/broadcast/deleteVoDFile/"+ broadcast.getStreamId();
-			
+
 			String response = makePOSTRequest(url, null);
 
 			Result deleteVoDResponse = gson.fromJson(response.toString(), Result.class);
 			assertTrue(deleteVoDResponse.success);
-			
-			
 
+
+			try {
+				Process process = Runtime.getRuntime().exec("./src/test/resources/scripts/check_file_deleted.sh " + broadcast.getStreamId());
+				InputStream errorStream = process.getInputStream();
+				byte[] data = new byte[1024];
+				int length = 0;
+				String errorStr = null;
+
+				try {
+					while ((length = errorStream.read(data, 0, data.length)) > 0) {
+						errorStr  = new String(data, 0, length);
+						System.out.println(errorStr);
+					}
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
+				
+				assertTrue(errorStr == null || errorStr.length() == 1);
+
+
+			} catch (IOException e) {
+				e.printStackTrace();
+				fail(e.getMessage());
+			}
 
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -412,15 +435,15 @@ public class RestServiceFunctionalTest {
 					.build();
 
 
-			  RequestBuilder builder = RequestBuilder.post()
+			RequestBuilder builder = RequestBuilder.post()
 					.setUri(url)
 					.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
 
-			  if (entity != null) {
-				  builder.setEntity(new StringEntity(entity));
-			  }
+			if (entity != null) {
+				builder.setEntity(new StringEntity(entity));
+			}
 
-			 HttpUriRequest post = builder.build();
+			HttpUriRequest post = builder.build();
 			CloseableHttpResponse response = client.execute(post);
 
 			StringBuffer result = readResponse(response);
