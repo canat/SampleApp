@@ -1,11 +1,14 @@
-package io.antmedia.serverapp.pscp.test;
+package io.antmedia.serverapp.test;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
+import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -14,16 +17,19 @@ import com.google.api.services.youtube.model.LiveStreamStatus;
 
 import io.antmedia.datastore.db.types.Endpoint;
 import io.antmedia.datastore.preference.PreferenceStore;
-import io.antmedia.enterprise.social.endpoint.YoutubeEndpoint;
-import io.antmedia.social.endpoint.VideoServiceEndpoint.DeviceAuthParameters;
+import io.antmedia.serverapp.test.integration.AppFunctionalIT;
 import io.antmedia.social.endpoint.PeriscopeEndpoint;
+import io.antmedia.social.endpoint.VideoServiceEndpoint.DeviceAuthParameters;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class YoutubeEndpointTest {
+public class PeriscopeEndpointTest {
 
-	private static final String TARGET_TEST_PROPERTIES = "target/youtube.properties";
-	public String CLIENT_ID = "560273359199-95s13urkod9lo0srbjpr4e5c70vdj2f6.apps.googleusercontent.com";
-	public String CLIENT_SECRET = "p5LbrEZf6B6tKo3c4Dna8ejV";
+	private static final String TARGET_TEST_PROPERTIES = "target/test.properties";
+	public String CLIENT_ID = "Q90cMeG2gUzC6fImXcp2SvyVqwVSvGDlsFsRF4Uia9NR1M-Zru";
+	public String CLIENT_SECRET = "dBCjxFbawo436VSWMvuD5SDSZoSdhew_-Fvrh5QhrBXuKoelVM";
+
+
+
 
 	@Test
 	public void testAccessToken() {
@@ -31,7 +37,7 @@ public class YoutubeEndpointTest {
 		try {
 			PreferenceStore dataStore = new PreferenceStore(TARGET_TEST_PROPERTIES);
 			dataStore.setFullPath(TARGET_TEST_PROPERTIES);
-			YoutubeEndpoint endPoint = new YoutubeEndpoint(CLIENT_ID, CLIENT_SECRET, dataStore);
+			PeriscopeEndpoint endPoint = new PeriscopeEndpoint(CLIENT_ID, CLIENT_SECRET, dataStore);
 			DeviceAuthParameters device = null;
 			endPoint.start();
 
@@ -85,11 +91,11 @@ public class YoutubeEndpointTest {
 	public void testCreateBroadcastNoName() {
 		PreferenceStore dataStore = new PreferenceStore(TARGET_TEST_PROPERTIES);
 		dataStore.setFullPath(TARGET_TEST_PROPERTIES);
-		YoutubeEndpoint endPoint = new YoutubeEndpoint(CLIENT_ID, CLIENT_SECRET, dataStore);
+		PeriscopeEndpoint endPoint = new PeriscopeEndpoint(CLIENT_ID, CLIENT_SECRET, dataStore);
 		endPoint.start();
 
 		try {
-			Endpoint endpoint = endPoint.createBroadcast(null, null, false, false, 720);
+			Endpoint endpoint = endPoint.createBroadcast("", "", false, false, 720);
 			assertNotNull(endpoint);
 			assertNotNull(endpoint.rtmpUrl);
 			assertTrue(endpoint.rtmpUrl.length() > 0);
@@ -106,15 +112,15 @@ public class YoutubeEndpointTest {
 	public void testCreateBroadcast() {
 		PreferenceStore dataStore = new PreferenceStore(TARGET_TEST_PROPERTIES);
 		dataStore.setFullPath(TARGET_TEST_PROPERTIES);
-		YoutubeEndpoint endPoint = new YoutubeEndpoint(CLIENT_ID, CLIENT_SECRET, dataStore);
+		PeriscopeEndpoint endPoint = new PeriscopeEndpoint(CLIENT_ID, CLIENT_SECRET, dataStore);
 		endPoint.start();
 		try {
 			String name = "evet name";
-			Endpoint endpoint = endPoint.createBroadcast("name24", "description", false, false, 720);
+			Endpoint endpoint = endPoint.createBroadcast(null, null, false, false, 720);
 
 			System.out.println("rtmp url is:" + endpoint.rtmpUrl);
 
-			AppFunctionalTest.executeProcess("/usr/local/bin/ffmpeg -re -i src/test/resources/test.flv -acodec copy -vcodec copy -f flv " + endpoint.rtmpUrl);
+			AppFunctionalIT.executeProcess("/usr/local/bin/ffmpeg -re -i src/test/resources/test.flv -acodec copy -vcodec copy -f flv " + endpoint.rtmpUrl);
 
 			LiveStreamStatus streamStatus = null;
 

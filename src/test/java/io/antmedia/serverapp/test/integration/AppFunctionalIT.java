@@ -1,4 +1,4 @@
-package io.antmedia.serverapp.pscp.test;
+package io.antmedia.serverapp.test.integration;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -22,7 +22,7 @@ import io.antmedia.rest.BroadcastRestService.Result;
 import io.antmedia.serverapp.pscp.Application;
 
 
-public class AppFunctionalTest {
+public class AppFunctionalIT {
 
 
 	private BroadcastRestService restService = null;
@@ -50,7 +50,7 @@ public class AppFunctionalTest {
 	
 	@Test
 	public void testCreateBroadcast() {
-		RestServiceFunctionalTest restService = new RestServiceFunctionalTest();
+		RestServiceIT restService = new RestServiceIT();
 
 
 		Broadcast broadcast = restService.createBroadcast("TOBB Demo");
@@ -63,10 +63,12 @@ public class AppFunctionalTest {
 	
 	@Test
 	public void testSendEndLiveStreamToThirdparty() {
+		/*
 		String url = "http://10.2.42.238/ant-media-space/admin//listenerHookURL.php";
 		StringBuffer notifyHook = AntMediaApplicationAdapter.notifyHook(url, "809630328345580383813514",
 				AntMediaApplicationAdapter.HOOK_ACTION_END_LIVE_STREAM);
 		System.out.println("Result: " + notifyHook.toString());
+		*/
 		
 	}
 
@@ -78,7 +80,7 @@ public class AppFunctionalTest {
 		try {
 			//call web service to create stream
 
-			RestServiceFunctionalTest restService = new RestServiceFunctionalTest();
+			RestServiceIT restService = new RestServiceIT();
 
 
 			Broadcast broadcast = restService.createBroadcast("name");
@@ -131,7 +133,7 @@ public class AppFunctionalTest {
 			public void run() {
 				try {
 
-					AppFunctionalTest.process = Runtime.getRuntime().exec(command);
+					AppFunctionalIT.process = Runtime.getRuntime().exec(command);
 					InputStream errorStream = process.getErrorStream();
 					byte[] data = new byte[1024];
 					int length = 0;

@@ -1,4 +1,4 @@
-package io.antmedia.serverapp.pscp.test;
+package io.antmedia.serverapp.test;
 
 import static org.junit.Assert.*;
 
@@ -15,6 +15,7 @@ import com.google.api.services.youtube.model.LiveStreamStatus;
 import io.antmedia.datastore.db.types.Endpoint;
 import io.antmedia.datastore.preference.PreferenceStore;
 import io.antmedia.enterprise.social.endpoint.FacebookEndpoint;
+import io.antmedia.serverapp.test.integration.AppFunctionalIT;
 import io.antmedia.social.endpoint.VideoServiceEndpoint.DeviceAuthParameters;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -115,7 +116,7 @@ public class FacebookEndpointTest {
 
 			System.out.println("rtmp url is:" + endpoint.rtmpUrl);
 
-			AppFunctionalTest.executeProcess("/usr/local/bin/ffmpeg -re -i src/test/resources/test.flv -acodec copy -vcodec copy -f flv " + endpoint.rtmpUrl);
+			AppFunctionalIT.executeProcess("/usr/local/bin/ffmpeg -re -i src/test/resources/test.flv -acodec copy -vcodec copy -f flv " + endpoint.rtmpUrl);
 
 			LiveStreamStatus streamStatus = null;
 

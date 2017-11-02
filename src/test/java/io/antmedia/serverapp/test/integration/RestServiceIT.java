@@ -1,4 +1,4 @@
-package io.antmedia.serverapp.pscp.test;
+package io.antmedia.serverapp.test.integration;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -32,6 +32,8 @@ import org.apache.http.message.BasicNameValuePair;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import org.quartz.spi.InstanceIdGenerator;
 
 import com.google.gson.Gson;
 
@@ -42,7 +44,7 @@ import io.antmedia.rest.BroadcastRestService.Result;
 import io.antmedia.social.endpoint.VideoServiceEndpoint.DeviceAuthParameters;
 
 
-public class RestServiceFunctionalTest {
+public class RestServiceIT {
 
 
 	private static final String ROOT_APP_URL = "http://localhost:5080/PSCP";
@@ -382,7 +384,7 @@ public class RestServiceFunctionalTest {
 			//let mp4 file to be created
 			Thread.sleep(2000);
 
-			boolean vodExists = AppFunctionalTest.exists(ROOT_APP_URL + "/streams/" + broadcast.getStreamId() + ".mp4", false);
+			boolean vodExists = AppFunctionalIT.exists(ROOT_APP_URL + "/streams/" + broadcast.getStreamId() + ".mp4", false);
 
 			assertTrue(vodExists);
 
@@ -411,7 +413,7 @@ public class RestServiceFunctionalTest {
 				catch (Exception e) {
 					e.printStackTrace();
 				}
-				
+
 				assertTrue(errorStr == null || errorStr.length() == 1);
 
 
@@ -765,7 +767,6 @@ public class RestServiceFunctionalTest {
 
 			}
 
-
 			for (Endpoint endpoint : endpointList2) {
 				for (Endpoint endpointFirst : endpointList) {
 					assertTrue(!endpoint.rtmpUrl.equals(endpointFirst.rtmpUrl) || !endpoint.broadcastId.equals(endpointFirst.broadcastId));
@@ -813,6 +814,86 @@ public class RestServiceFunctionalTest {
 	}
 
 
+	public void authenticateSocialEndpoints() {
+		Result result;
+		try {
+			//authenticate facebook
+			//get parameters
+			DeviceAuthParameters deviceAuthParameters = getDeviceAuthParameters("facebook");
+			System.out.println(" url: " + deviceAuthParameters.verification_url );
+			System.out.println(" user code: " + deviceAuthParameters.user_code );
+			assertNotNull(deviceAuthParameters.verification_url);
+			assertNotNull(deviceAuthParameters.user_code);
+
+			//ask if authenticated
+			do {
+				System.out.println("You should enter this code: " + deviceAuthParameters.user_code +
+						" to this url: " + deviceAuthParameters.verification_url);
+				System.out.println("Waiting before asking auth status");
+
+				Thread.sleep(deviceAuthParameters.interval * 1000);
+				result = checkDeviceAuthStatus("facebook");
+				System.out.println("auth status is " + result.success);
+
+			} while (!result.success);
+
+
+			assertTrue(result.success);
+
+
+
+			//authenticate twitter
+			deviceAuthParameters = getDeviceAuthParameters("periscope");
+			System.out.println(" url: " + deviceAuthParameters.verification_url );
+			System.out.println(" user code: " + deviceAuthParameters.user_code );
+			assertNotNull(deviceAuthParameters.verification_url);
+			assertNotNull(deviceAuthParameters.user_code);
+
+			do {
+				System.out.println("You should enter this code: " + deviceAuthParameters.user_code +
+						" to this url: " + deviceAuthParameters.verification_url);
+				System.out.println("Waiting "+ deviceAuthParameters.interval + " seconds before asking auth status");
+
+				Thread.sleep(deviceAuthParameters.interval * 1000);
+				result = checkDeviceAuthStatus("periscope");
+				System.out.println("auth status is " + result.success);
+
+			} while (!result.success);
+			
+			assertTrue(result.success);
+			
+			
+			
+			
+
+
+			//authenticate youtube
+			deviceAuthParameters = getDeviceAuthParameters("youtube");
+			System.out.println(" url: " + deviceAuthParameters.verification_url );
+			System.out.println(" user code: " + deviceAuthParameters.user_code );
+			assertNotNull(deviceAuthParameters.verification_url);
+			assertNotNull(deviceAuthParameters.user_code);
+
+			do {
+				System.out.println("You should enter this code: " + deviceAuthParameters.user_code +
+						" to this url: " + deviceAuthParameters.verification_url);
+				System.out.println("Waiting "+ deviceAuthParameters.interval + " seconds before asking auth status");
+
+				Thread.sleep(deviceAuthParameters.interval * 1000);
+				result = checkDeviceAuthStatus("youtube");
+				System.out.println("auth status is " + result.success);
+
+			} while (!result.success);
+
+
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
+
+	}
+
 	@Test
 	public void testAddEndpoint() {
 
@@ -851,25 +932,9 @@ public class RestServiceFunctionalTest {
 			assertFalse(result.success);
 			assertNotNull(result.message);
 
-			//authenticate facebook
-			//get parameters
-			DeviceAuthParameters deviceAuthParameters = getDeviceAuthParameters("facebook");
-			System.out.println(" url: " + deviceAuthParameters.verification_url );
-			System.out.println(" user code: " + deviceAuthParameters.user_code );
-			assertNotNull(deviceAuthParameters.verification_url);
-			assertNotNull(deviceAuthParameters.user_code);
 
-			//ask if authenticated
-			do {
-				System.out.println("You should enter this code: " + deviceAuthParameters.user_code +
-						" to this url: " + deviceAuthParameters.verification_url);
-				System.out.println("Waiting before asking auth status");
 
-				Thread.sleep(deviceAuthParameters.interval * 1000);
-				result = checkDeviceAuthStatus("facebook");
-				System.out.println("auth status is " + result.success);
 
-			} while (!result.success);
 
 			//add facebook endpoint
 			result = addSocialEndpoint(broadcast.getStreamId().toString(), "facebook");
@@ -877,23 +942,6 @@ public class RestServiceFunctionalTest {
 			//check that it is successfull
 			assertTrue(result.success);
 
-			//authenticate twitter
-			deviceAuthParameters = getDeviceAuthParameters("periscope");
-			System.out.println(" url: " + deviceAuthParameters.verification_url );
-			System.out.println(" user code: " + deviceAuthParameters.user_code );
-			assertNotNull(deviceAuthParameters.verification_url);
-			assertNotNull(deviceAuthParameters.user_code);
-
-			do {
-				System.out.println("You should enter this code: " + deviceAuthParameters.user_code +
-						" to this url: " + deviceAuthParameters.verification_url);
-				System.out.println("Waiting "+ deviceAuthParameters.interval + " seconds before asking auth status");
-
-				Thread.sleep(deviceAuthParameters.interval * 1000);
-				result = checkDeviceAuthStatus("periscope");
-				System.out.println("auth status is " + result.success);
-
-			} while (!result.success);
 
 
 			//add twitter endpoint
@@ -901,25 +949,6 @@ public class RestServiceFunctionalTest {
 
 			//check that it is succes full
 			assertTrue(result.success);
-
-
-			//authenticate youtube
-			deviceAuthParameters = getDeviceAuthParameters("youtube");
-			System.out.println(" url: " + deviceAuthParameters.verification_url );
-			System.out.println(" user code: " + deviceAuthParameters.user_code );
-			assertNotNull(deviceAuthParameters.verification_url);
-			assertNotNull(deviceAuthParameters.user_code);
-
-			do {
-				System.out.println("You should enter this code: " + deviceAuthParameters.user_code +
-						" to this url: " + deviceAuthParameters.verification_url);
-				System.out.println("Waiting "+ deviceAuthParameters.interval + " seconds before asking auth status");
-
-				Thread.sleep(deviceAuthParameters.interval * 1000);
-				result = checkDeviceAuthStatus("youtube");
-				System.out.println("auth status is " + result.success);
-
-			} while (!result.success);
 
 			//add youtube endpoint
 			result = addSocialEndpoint(broadcast.getStreamId().toString(), "youtube");
@@ -945,8 +974,6 @@ public class RestServiceFunctionalTest {
 			e.printStackTrace();
 			fail(e.getMessage());
 		}
-
-
 
 	}
 
@@ -1055,8 +1082,6 @@ public class RestServiceFunctionalTest {
 			//Gson gson = new Gson();
 			//Broadcast broadcast = null; //new Broadcast();
 			//broadcast.name = "name";
-
-
 
 			get = RequestBuilder.get()
 					.setUri(url + "?id="+tmp.getStreamId())

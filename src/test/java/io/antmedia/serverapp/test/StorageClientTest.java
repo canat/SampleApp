@@ -1,4 +1,4 @@
-package io.antmedia.serverapp.pscp.test;
+package io.antmedia.serverapp.test;
 
 import static org.junit.Assert.*;
 
