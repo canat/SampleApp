@@ -407,14 +407,14 @@ public class RestServiceIT {
 				try {
 					while ((length = errorStream.read(data, 0, data.length)) > 0) {
 						errorStr  = new String(data, 0, length);
-						System.out.println(errorStr);
+						System.out.println("errorstr:" + errorStr);
 					}
 				}
 				catch (Exception e) {
 					e.printStackTrace();
 				}
 
-				assertTrue(errorStr == null || errorStr.length() == 1);
+				assertTrue(errorStr == null || errorStr.length() == 0);
 
 
 			} catch (IOException e) {
@@ -814,6 +814,7 @@ public class RestServiceIT {
 	}
 
 
+	//@Test
 	public void authenticateSocialEndpoints() {
 		Result result;
 		try {
@@ -862,11 +863,6 @@ public class RestServiceIT {
 			
 			assertTrue(result.success);
 			
-			
-			
-			
-
-
 			//authenticate youtube
 			deviceAuthParameters = getDeviceAuthParameters("youtube");
 			System.out.println(" url: " + deviceAuthParameters.verification_url );
@@ -898,10 +894,9 @@ public class RestServiceIT {
 	public void testAddEndpoint() {
 
 		try {
+			/*
 			//create broadcast
-			Broadcast broadcast = createBroadcast(null);
-
-			updateNameAndDescription(broadcast.getStreamId().toString(), "name", "description");
+		
 
 			System.out.println("broadcast id string: " + broadcast.getStreamId().toString());
 
@@ -931,18 +926,17 @@ public class RestServiceIT {
 			//check that error returns
 			assertFalse(result.success);
 			assertNotNull(result.message);
+			*/
 
+			Broadcast broadcast = createBroadcast(null);
 
-
-
-
+			updateNameAndDescription(broadcast.getStreamId().toString(), "name", "description");
+			
 			//add facebook endpoint
-			result = addSocialEndpoint(broadcast.getStreamId().toString(), "facebook");
+			Result result = addSocialEndpoint(broadcast.getStreamId().toString(), "facebook");
 
 			//check that it is successfull
 			assertTrue(result.success);
-
-
 
 			//add twitter endpoint
 			result = addSocialEndpoint(broadcast.getStreamId().toString(), "periscope");

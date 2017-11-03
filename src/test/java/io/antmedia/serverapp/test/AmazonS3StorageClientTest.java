@@ -13,7 +13,7 @@ import org.junit.Test;
 import io.antmedia.storage.AmazonS3StorageClient;
 import io.antmedia.storage.StorageClient.FileType;
 
-public class StorageClientTest {
+public class AmazonS3StorageClientTest {
 	
 	public static final String testAccessKey = "AKIAI67H5KXQOULQE6AQ";
 	

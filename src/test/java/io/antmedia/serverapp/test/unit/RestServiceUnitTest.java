@@ -1,4 +1,4 @@
-package io.antmedia.serverapp.test;
+package io.antmedia.serverapp.test.unit;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -14,6 +14,7 @@ import org.springframework.test.context.ContextConfiguration;
 import com.google.gson.Gson;
 
 import io.antmedia.datastore.db.IDataStore;
+import io.antmedia.datastore.db.InMemoryDataStore;
 import io.antmedia.datastore.db.MongoStore;
 import io.antmedia.datastore.db.types.Broadcast;
 import io.antmedia.rest.BroadcastRestService;
@@ -42,7 +43,7 @@ public class RestServiceUnitTest  {
 	@Test
 	public void testAllInOne() {
 		Broadcast broadcast = new Broadcast(null, "name");
-		IDataStore store = new MongoStore("testdb");
+		IDataStore store = new InMemoryDataStore("testdb");
 		restService.setDataStore(store);
 		Broadcast createBroadcast = restService.createBroadcast(broadcast);
 
