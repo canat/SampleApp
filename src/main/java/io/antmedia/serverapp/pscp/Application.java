@@ -4,7 +4,6 @@ package io.antmedia.serverapp.pscp;
 import java.io.File;
 import java.util.List;
 
-import org.red5.server.adapter.AntMediaApplicationAdapter;
 import org.red5.server.adapter.MultiThreadedApplicationAdapter;
 import org.red5.server.api.IConnection;
 import org.red5.server.api.scheduling.IScheduledJob;
@@ -19,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 
+import io.antmedia.AntMediaApplicationAdapter;
 import io.antmedia.datastore.db.IDataStore;
 import io.antmedia.muxer.IMuxerListener;
 import io.antmedia.muxer.MuxAdaptor;

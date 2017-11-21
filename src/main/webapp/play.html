@@ -1,16 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+pageEncoding="UTF-8"%>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Ant Media Server</title>
- 
+
 <!-- 1. skin -->
-<link rel="stylesheet" href="//releases.flowplayer.org/7.1.2/skin/skin.css">
- 
-<!-- 2. jquery library - required for video tag based installs -->
-<script src="//code.jquery.com/jquery-1.12.4.min.js"></script>
- 
+<link rel="stylesheet"
+	href="//releases.flowplayer.org/7.1.2/skin/skin.css">
+
 <!-- 3. flowplayer -->
 <script src="//releases.flowplayer.org/7.1.2/flowplayer.min.js"></script>
 
@@ -19,26 +17,96 @@
 
 </head>
 <body>
-<!-- 
-data-rtmp="rtmp://127.0.0.1/vod" 
--->
-<div class="flowplayer">
-	<video>
-	<%
-		String name = request.getParameter("name");
-	    if (name == null) 
-	    {
-	        out.println("There is no stream identifier.");
-	    } else if (name.endsWith("m3u8"))
-	    {
-	        out.println("<source type='application/x-mpegurl' src='streams/"+name+"'>");
-	    }
-	    else if (name.endsWith("mp4")) {
-	    	out.println("<source type='video/mp4' src='streams/"+name+"'>");
-	    }
-	%>
-	</video>
-</div>
+
+	<div id="video-player" class="fp-slim"></div>
+
+	<script>
+window.onload = function() {
+	var name = "<%= request.getParameter("name") %>";
+	var id = name;
+	if (name.endsWith("_adaptive")) {
+		id = name.substring(0, name.lastIndexOf("_adaptive"));
+	}
+	
+	//ask if vod file
+	fetch("streams/"+ id +".mp4", {method:'HEAD'})
+		.then(function(response){  
+			
+			if (response.status == 200) 
+			{
+				//yes it is a vod file, play it
+				flowplayer("#video-player", {
+					autoplay: true,
+				    ratio: 9/16,
+				    clip: {
+				      sources: [
+				        { type: "video/mp4",
+				          src: "streams/"+ id +".mp4" }  // use "id" as name because there is no adaptive mp4
+				      ]
+				    }
+				  });
+			}
+			else {
+				// there is no vod file, ask server
+				fetch("rest/broadcast/get?id=" + id ).then(function(response) 
+						{
+							response.json().then(function (data) 
+							{
+						
+								if (data.status == "created") {
+									
+									flowplayer("#video-player", {
+										splash: "images/broadcast_not_started_tr.png",
+									    ratio: 9/16,
+									    clip: {
+									      live: true,
+									      sources: [
+									        { type: "application/x-mpegurl",
+									          src: "streams/"+ name +".m3u8" }
+									      ]
+									    }
+									  });
+								}
+								else if (data.status == "broadcasting") {
+									flowplayer("#video-player", {
+										autoplay: true,
+									    ratio: 9/16,
+									    clip: {
+									      live: true,
+									      sources: [
+									        { type: "application/x-mpegurl",
+									          src: "streams/"+ name +".m3u8" }  //use "name" as name 
+									      ]
+									    }
+									  });
+								}
+								else if (data.status == "finished") {
+									flowplayer("#video-player", {
+										autoplay: true,
+									    ratio: 9/16,
+									    clip: {
+									      sources: [
+									        { type: "video/mp4",
+									          src: "streams/"+ id +".mp4" }  // use "id" as name
+									      ]
+									    }
+									  });
+								}
+								else if (data.status == null) {
+									// do nothing
+								}
+						}); // end of response.json
+				}).catch(function(err) {
+					console.log(err);
+				});
+			}
+		 }).catch(function(err) { console.log(err); });
+	
+	
+	
+
+}
+</script>
 
 </body>
 </html>
