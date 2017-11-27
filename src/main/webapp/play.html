@@ -14,41 +14,49 @@ pageEncoding="UTF-8"%>
 
 <script src="//releases.flowplayer.org/hlsjs/flowplayer.hlsjs.min.js"></script>
 
-
+<script src="js/fetch.js"></script>
+<script src="js/promise.min.js"></script>
 </head>
 <body>
 
 	<div id="video-player" class="fp-slim"></div>
 
 	<script>
-window.onload = function() {
+
+	
+	
 	var name = "<%= request.getParameter("name") %>";
-	var id = name;
-	if (name.endsWith("_adaptive")) {
-		id = name.substring(0, name.lastIndexOf("_adaptive"));
+	
+	var pAutoplay = "<%= request.getParameter("autoplay") %>";
+	var autoPlay = false;
+	if (pAutoplay == "true") {
+		autoPlay = true;
 	}
 	
+	
+	
 	//ask if vod file
-	fetch("streams/"+ id +".mp4", {method:'HEAD'})
+	fetch("streams/"+ name +".mp4", {method:'HEAD'})
 		.then(function(response){  
 			
 			if (response.status == 200) 
 			{
 				//yes it is a vod file, play it
 				flowplayer("#video-player", {
-					autoplay: true,
+					poster: "previews/" + name + ".png",
+					autoplay: autoPlay,
 				    ratio: 9/16,
 				    clip: {
 				      sources: [
 				        { type: "video/mp4",
-				          src: "streams/"+ id +".mp4" }  // use "id" as name because there is no adaptive mp4
+				          src: "streams/"+ name +".mp4" } 
 				      ]
 				    }
 				  });
 			}
 			else {
 				// there is no vod file, ask server
-				fetch("rest/broadcast/get?id=" + id ).then(function(response) 
+				fetch("rest/broadcast/get?id=" + name ).then(function(response) 
 						{
 							response.json().then(function (data) 
 							{
@@ -68,26 +76,42 @@ window.onload = function() {
 									  });
 								}
 								else if (data.status == "broadcasting") {
-									flowplayer("#video-player", {
-										autoplay: true,
-									    ratio: 9/16,
-									    clip: {
-									      live: true,
-									      sources: [
-									        { type: "application/x-mpegurl",
-									          src: "streams/"+ name +".m3u8" }  //use "name" as name 
-									      ]
-									    }
-									  });
+									
+									fetch("streams/"+ name +"_adaptive.m3u8", {method:'HEAD'})
+										.then(function(response) 
+										 {
+											var videoSrc = "streams/"+ name +".m3u8";
+										           
+											if (response.status == 200) {
+												videoSrc = "streams/" + name + "_adaptive.m3u8";
+											}
+											
+											flowplayer("#video-player", {
+												poster: "previews/" + name + ".png",
+												autoplay: autoPlay,
+											    ratio: 9/16,
+											    clip: {
+											      live: true,
+											      sources: [
+											        { type: "application/x-mpegurl",
+											          src: videoSrc 
+											        }  
+											      ]
+											    }
+											  });
+										});
+									
+									
 								}
 								else if (data.status == "finished") {
 									flowplayer("#video-player", {
-										autoplay: true,
+										poster: "previews/" + name + ".png",
+										autoplay: autoPlay,
 									    ratio: 9/16,
 									    clip: {
 									      sources: [
 									        { type: "video/mp4",
-									          src: "streams/"+ id +".mp4" }  // use "id" as name
+									          src: "streams/"+ name +".mp4" }  
 									      ]
 									    }
 									  });
@@ -101,11 +125,7 @@ window.onload = function() {
 				});
 			}
 		 }).catch(function(err) { console.log(err); });
-	
-	
-	
 
-}
 </script>
 
 </body>
