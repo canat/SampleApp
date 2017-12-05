@@ -22,7 +22,7 @@
 		<maven-failsafe-plugin.version>2.20.1</maven-failsafe-plugin.version>
 	</properties>
 	<build>
-		<finalName>PSCP</finalName>
+		<finalName>live</finalName>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>

@@ -55,21 +55,25 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
 	<bean id="web.handler" class="io.antmedia.serverapp.pscp.Application" >
 		<property name="videoServiceEndpoints">
 			<list>
+			<!-- 
 				<bean class="io.antmedia.enterprise.social.endpoint.FacebookEndpoint" init-method="start">
 					<constructor-arg value="${facebook.clientId}"/>
 					<constructor-arg value="${facebook.clientSecret}"/>
 					<constructor-arg ref="preference.store"/>
 				</bean>
+			 -->	
 				<bean class="io.antmedia.social.endpoint.PeriscopeEndpoint" init-method="start">
 					<constructor-arg value="${periscope.clientId}"/>
 					<constructor-arg value="${periscope.clientSecret}"/>
 					<constructor-arg ref="preference.store"/>
 				</bean>
+			<!-- 	
 				<bean class="io.antmedia.enterprise.social.endpoint.YoutubeEndpoint" init-method="start">
 					<constructor-arg value="${youtube.clientId}"/>
 					<constructor-arg value="${youtube.clientSecret}"/>
 					<constructor-arg ref="preference.store"/>
 				</bean>
+			 -->
 			</list>
 		</property>
 		
