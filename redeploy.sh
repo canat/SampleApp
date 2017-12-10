@@ -1,17 +1,17 @@
 #!/bin/bash
 
-mvn clean package -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+mvn clean install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -DskipITs
 
 USER_HOME_DIR=/Users/mekya
 
-SRC=target/live.war
+SRC=target/LiveApp.war
 
 DEST=~/softwares/ant-media-server/webapps/
 
 
 #copy red5 jar from target dir to red5 dir
 
-rm -rf $DEST/live
+rm -rf $DEST/LiveApp
 cp  $SRC  $DEST
 
 
