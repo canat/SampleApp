@@ -41,10 +41,10 @@ public class AmazonS3StorageClientTest {
 	@Test
 	public void testAmazonS3SaveStream() {
 		
-		File f = new File("src/test/resources/test.flv");
+		File f = new File("target/test-classes/test.flv");
 		assertTrue(f.exists());
 		
-		File destFile = new File("src/test/resources/test2.flv");
+		File destFile = new File("target/test-classes/test2.flv");
 		try {
 			FileUtils.copyFile(f, destFile);
 		} catch (IOException e) {
@@ -69,10 +69,10 @@ public class AmazonS3StorageClientTest {
 	@Test
 	public void testAmazonS3SavePreview() {
 		
-		File f = new File("src/test/resources/test.png");
+		File f = new File("target/test-classes/test.png");
 		assertTrue(f.exists());
 		
-		File destFile = new File("src/test/resources/test2.png");
+		File destFile = new File("target/test-classes/test2.png");
 		try {
 			FileUtils.copyFile(f, destFile);
 		} catch (IOException e) {
