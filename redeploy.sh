@@ -1,6 +1,6 @@
 #!/bin/bash
 
-mvn clean install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -DskipITs
+mvn clean install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -DskipITs -Dgpg.skip=true
 
 USER_HOME_DIR=/Users/mekya
 
