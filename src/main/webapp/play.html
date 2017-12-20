@@ -7,10 +7,10 @@ pageEncoding="UTF-8"%>
 
 <!-- 1. skin -->
 <link rel="stylesheet"
-	href="//releases.flowplayer.org/7.1.2/skin/skin.css">
+	href="//releases.flowplayer.org/7.2.1/skin/skin.css">
 
 <!-- 3. flowplayer -->
-<script src="//releases.flowplayer.org/7.1.2/flowplayer.min.js"></script>
+<script src="//releases.flowplayer.org/7.2.1/flowplayer.min.js"></script>
 
 <script src="//releases.flowplayer.org/hlsjs/flowplayer.hlsjs.min.js"></script>
 
@@ -30,98 +30,78 @@ pageEncoding="UTF-8"%>
 		autoPlay = true;
 	}
 	
+	function initializePlayer(name, extension) {
+		var type;
+		if (extension == "mp4") {
+			type = "video/mp4";
+		}
+		else if (extension == "m3u8") {
+			type = "application/x-mpegurl";
+		}
+		else {
+			console.log("Unknown extension: " + extension);
+			return;
+		}
+		
+		var preview = name;
+		if (name.endsWith("_adaptive")) {
+			preview = name.substring(0, name.indexOf("_adaptive"));
+		}
+		
+		flowplayer("#video-player", {
+			poster: "previews/" + preview + ".png",
+			autoplay: autoPlay,
+		    ratio: 9/16,
+		    clip: {
+		      sources: [
+		        { type: type,
+		          src: "streams/"+ name +"." + extension } 
+		      ]
+		    }
+		  });
+		
+	}
 	
-	
-	//ask if vod file
-	fetch("streams/"+ name +".mp4", {method:'HEAD'})
-		.then(function(response){  
-			
-			if (response.status == 200) 
-			{
-				//yes it is a vod file, play it
-				flowplayer("#video-player", {
-					poster: "previews/" + name + ".png",
-					autoplay: autoPlay,
-				    ratio: 9/16,
-				    clip: {
-				      sources: [
-				        { type: "video/mp4",
-				          src: "streams/"+ name +".mp4" } 
-				      ]
-				    }
-				  });
+	//ask if adaptive m3u8 file
+	fetch("streams/"+ name +"_adaptive.m3u8", {method:'HEAD'})
+		.then(function(response) {
+			if (response.status == 200) {
+				// adaptive m3u8 exists,play it
+				initializePlayer(name+"_adaptive", "m3u8");
 			}
-			else {
-				// there is no vod file, ask server
-				fetch("rest/broadcast/get?id=" + name ).then(function(response) 
-						{
-							response.json().then(function (data) 
-							{
+			else 
+			{
+				//adaptive m3u8 not exists, try m3u8 exists.
+				fetch("streams/"+ name +".m3u8", {method:'HEAD'})
+				.then(function(response) {
+					if (response.status == 200) {
+						//m3u8 exists, play it
+						initializePlayer(name, "m3u8");
+					}
+					else {
+						//no m3u8 exists, try vod file
+						fetch("streams/"+ name +".mp4", {method:'HEAD'})
+						.then(function(response) {
+							if (response.status == 200) {
+								//mp4 exists, play it
+								initializePlayer(name, "mp4");
+							}
+							else {
+								console.log("No stream found");
+								
+							}
+						}).catch(function(err) {
+							console.log("Error: " + err);
+						});
 						
-								if (data.status == "created") {
-									
-									flowplayer("#video-player", {
-										splash: "images/broadcast_not_started_tr.png",
-									    ratio: 9/16,
-									    clip: {
-									      live: true,
-									      sources: [
-									        { type: "application/x-mpegurl",
-									          src: "streams/"+ name +".m3u8" }
-									      ]
-									    }
-									  });
-								}
-								else if (data.status == "broadcasting") {
-									
-									fetch("streams/"+ name +"_adaptive.m3u8", {method:'HEAD'})
-										.then(function(response) 
-										 {
-											var videoSrc = "streams/"+ name +".m3u8";
-										           
-											if (response.status == 200) {
-												videoSrc = "streams/" + name + "_adaptive.m3u8";
-											}
-											
-											flowplayer("#video-player", {
-												poster: "previews/" + name + ".png",
-												autoplay: autoPlay,
-											    ratio: 9/16,
-											    clip: {
-											      live: true,
-											      sources: [
-											        { type: "application/x-mpegurl",
-											          src: videoSrc 
-											        }  
-											      ]
-											    }
-											  });
-										});
-									
-									
-								}
-								else if (data.status == "finished") {
-									flowplayer("#video-player", {
-										poster: "previews/" + name + ".png",
-										autoplay: autoPlay,
-									    ratio: 9/16,
-									    clip: {
-									      sources: [
-									        { type: "video/mp4",
-									          src: "streams/"+ name +".mp4" }  
-									      ]
-									    }
-									  });
-								}
-								else if (data.status == null) {
-									// do nothing
-								}
-						}); // end of response.json
+					}
 				}).catch(function(err) {
-					console.log(err);
+					console.log("Error: " + err);
 				});
 			}
-		 }).catch(function(err) { console.log(err); });
+		}).catch(function(err) {
+			console.log("Error: " + err);
+		});
 
 </script>
 
