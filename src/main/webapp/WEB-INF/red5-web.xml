@@ -48,6 +48,8 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
 	<bean id="db.datastore" class="io.antmedia.datastore.db.MapDBStore">
 		<constructor-arg value="${webapp.dbName}" />
 	</bean>
+	
+	
 	 
 	<!--
 	Defines the web handler which acts as an applications endpoint
@@ -77,6 +79,15 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
 			</list>
 		</property>
 		
+		<property name="streamPublishSecurityList">
+			<list>
+				<bean class="io.antmedia.security.ExpireStreamPublishSecurity" >
+					<property name="dataStore"  ref="db.datastore"/>
+			
+				</bean>
+			</list>
+		</property>
+		
 		<property name="dataStore" ref="db.datastore" />
 		 
 	</bean>
@@ -98,6 +109,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
      	<property name="hlsListSize" value="${settings.hlsListSize}" />
       	<property name="hlsTime" value="${settings.hlsTime}" />
       	<property name="hlsPlayListType" value="${settings.hlsPlayListType}" />
+      	<property name="deleteHLSFilesOnEnded" value="${settings.deleteHLSFilesOnEnded}" />
 		
 	</bean>
 	
