@@ -110,6 +110,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
       	<property name="hlsTime" value="${settings.hlsTime}" />
       	<property name="hlsPlayListType" value="${settings.hlsPlayListType}" />
       	<property name="deleteHLSFilesOnEnded" value="${settings.deleteHLSFilesOnEnded}" />
+      	<property name="serverName" value="#{ @'ant.media.server.settings'.serverName }" />
 		
 	</bean>
 	
