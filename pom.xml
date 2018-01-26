@@ -4,12 +4,11 @@
 	<groupId>io.antmedia.app</groupId>
 	<artifactId>LiveApp</artifactId>
 	<packaging>war</packaging>
-	<version>1.2.0-SNAPSHOT</version>
+	<version>1.2.0</version>
 	<name>Sample Webapp for Ant Media Server</name>
 	<url>http://maven.apache.org</url>
 
 	<properties>
-		<ant-media-server.version>1.2.0-SNAPSHOT</ant-media-server.version>
 		<red5-client.version>1.0.9-M2</red5-client.version>
 		<spring.version>4.3.6.RELEASE</spring.version>
 		<slf4j.version>1.7.18</slf4j.version>
@@ -22,6 +21,15 @@
 		<maven-failsafe-plugin.version>2.20.1</maven-failsafe-plugin.version>
 		<jersey.version>2.26</jersey.version>
 	</properties>
+	
+	<licenses>
+		<license>
+			<name>Apache 2</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+			<comments>A business-friendly OSS license</comments>
+		</license>
+	</licenses>
 	
 	<distributionManagement>
 		<snapshotRepository>
@@ -152,7 +160,7 @@
 		<dependency>
 			<groupId>io.antmedia</groupId>
 			<artifactId>ant-media-server</artifactId>
-			<version>${ant-media-server.version}</version>
+			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -296,4 +304,21 @@
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
+	<description>Sample application for Ant Media Server</description>
+	<scm>
+		<url>https://gitlab.com/Ant-Media/SampleApp</url>
+		<connection>https://gitlab.com/Ant-Media/SampleApp.git</connection>
+		<developerConnection>mekya &lt;mekya@antmedia.io&gt;</developerConnection>
+	</scm>
+	<organization>
+		<name>Ant Media</name>
+		<url>http://antmedia.io</url>
+	</organization>
+	 <developers>
+    <developer>
+      <id>mekya</id>
+      <email>mekya@antmedia.io</email>
+    </developer>
+    
+  </developers>
 </project>
