@@ -4,7 +4,7 @@
 	<groupId>io.antmedia.app</groupId>
 	<artifactId>LiveApp</artifactId>
 	<packaging>war</packaging>
-	<version>1.2.0</version>
+	<version>1.2.1-SNAPSHOT</version>
 	<name>Sample Webapp for Ant Media Server</name>
 	<url>http://maven.apache.org</url>
 
