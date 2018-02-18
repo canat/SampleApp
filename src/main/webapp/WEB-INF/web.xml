@@ -46,6 +46,16 @@
 		<servlet-name>jersey-serlvet</servlet-name>
 		<url-pattern>/rest/*</url-pattern>
 	</servlet-mapping>
+	<filter>
+		<filter-name>RestAuthenticationFiler</filter-name>
+		<filter-class>io.antmedia.serverapp.pscp.filter.RestAuthenticationFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>RestAuthenticationFiler</filter-name>
+		<url-pattern>/rest/*</url-pattern>
+	</filter-mapping>
+	
+	
 	<servlet-mapping>
 		<servlet-name>jsp</servlet-name>
 		<url-pattern>*.html</url-pattern>
