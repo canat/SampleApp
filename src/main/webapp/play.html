@@ -7,38 +7,24 @@ pageEncoding="UTF-8"%>
 
 <!-- 1. skin -->
 <link rel="stylesheet"
-	href="//releases.flowplayer.org/7.2.1/skin/skin.css">
+	href="//releases.flowplayer.org/7.2.4/skin/skin.css">
 
 <!-- 3. flowplayer -->
-<script src="//releases.flowplayer.org/7.2.1/flowplayer.min.js"></script>
+<script src="//releases.flowplayer.org/7.2.4/flowplayer.min.js"></script>
 
 <script src="//releases.flowplayer.org/hlsjs/flowplayer.hlsjs.min.js"></script>
 
 <script src="js/fetch.js"></script>
 <script src="js/promise.min.js"></script>
+<script src="js/fetch.stream.js"></script>
+<link href="css/player.css" rel="stylesheet">
 </head>
 <body>
-
-	<div id="video-player" class="fp-slim"></div>
-	<script>
+	<div id="video_info">Stream will start playing automatically<br/>when it is live</div>
+	<div id="video-player" class="fp-slim" >
+	</div>
 	
-
-	function isMobile() { 
-		if( navigator.userAgent.match(/Android/i)
-			  || navigator.userAgent.match(/webOS/i)
-			  || navigator.userAgent.match(/iPhone/i)
-			  || navigator.userAgent.match(/iPad/i)
-			  || navigator.userAgent.match(/iPod/i)
-			  || navigator.userAgent.match(/BlackBerry/i)
-			  || navigator.userAgent.match(/Windows Phone/i)
-			  )
-		{
-			     return true;
-		}
-		else {
-			     return false;
-		}
-	}
+	<script>
 
 	var name = "<%= request.getParameter("name") %>";
 	
@@ -82,49 +68,22 @@ pageEncoding="UTF-8"%>
 		    }
 		  });
 		
+		document.getElementById("video_info").innerHTML = "";
+		flowplayer(function (api, root) {
+
+			  api.on("error", function (error) {
+
+				   	if (error.code == 4) {
+				   		setTimeout(function() { initializePlayer(name, extension); }, 3000);
+				   	}
+
+			  });
+
+			});
+		
 	}
 	
-	//ask if adaptive m3u8 file
-	fetch("streams/"+ name +"_adaptive.m3u8", {method:'HEAD'})
-		.then(function(response) {
-			if (response.status == 200) {
-				// adaptive m3u8 exists,play it
-				initializePlayer(name+"_adaptive", "m3u8");
-			}
-			else 
-			{
-				//adaptive m3u8 not exists, try m3u8 exists.
-				fetch("streams/"+ name +".m3u8", {method:'HEAD'})
-				.then(function(response) {
-					if (response.status == 200) {
-						//m3u8 exists, play it
-						initializePlayer(name, "m3u8");
-					}
-					else {
-						//no m3u8 exists, try vod file
-						fetch("streams/"+ name +".mp4", {method:'HEAD'})
-						.then(function(response) {
-							if (response.status == 200) {
-								//mp4 exists, play it
-								initializePlayer(name, "mp4");
-							}
-							else {
-								console.log("No stream found");
-								
-							}
-						}).catch(function(err) {
-							console.log("Error: " + err);
-						});
-						
-					}
-				}).catch(function(err) {
-					console.log("Error: " + err);
-				});
-			}
-		}).catch(function(err) {
-			console.log("Error: " + err);
-		});
-
+	tryToPlay(name);
 </script>
 
 </body>
