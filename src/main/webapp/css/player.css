@@ -1,6 +1,7 @@
 
 body {
 	background-color:#eee;	
+	overflow:hidden;
 }
 
 #video_container{
