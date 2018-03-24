@@ -62,6 +62,16 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
       	<property name="deleteHLSFilesOnEnded" value="${settings.deleteHLSFilesOnEnded}" />
       	<property name="serverName" value="#{ @'ant.media.server.settings'.serverName }" />
       	<property name="acceptOnlyStreamsInDataStore" value="${settings.acceptOnlyStreamsInDataStore}" />
+      	
+      	<property name="facebookClientId" value="${facebook.clientId}" />
+      	<property name="facebookClientSecret" value="${facebook.clientSecret}" />
+      	
+      	<property name="periscopeClientId" value="${periscope.clientId}" />
+      	<property name="periscopeClientSecret" value="${periscope.clientSecret}" />
+      	
+      	<property name="youtubeClientId" value="${youtube.clientId}" />
+      	<property name="youtubeClientSecret" value="${youtube.clientSecret}" />
+      	
 		
 	</bean>
 	
@@ -77,10 +87,11 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
 	-->
 	<bean id="web.handler" class="io.antmedia.serverapp.pscp.Application" >
 		<property name="appSettings" ref="app.settings" />
-		
+		<!-- 
 		<property name="videoServiceEndpoints">
 			<list>
-				<bean class="#{ T(io.antmedia.rest.BroadcastRestService).isEnterprise() ? 'io.antmedia.enterprise.social.endpoint.FacebookEndpoint' : 'io.antmedia.social.endpoint.FakeEndpoint' }" init-method="start">
+				<bean class="#{ T(io.antmedia.rest.BroadcastRestService).isEnterprise() ? 'io.antmedia.enterprise.social.endpoint.FacebookEndpoint' : 'io.antmedia.social.endpoint.FakeEndpoint' }" 
+						init-method="start">
 					<constructor-arg value="${facebook.clientId}"/>
 					<constructor-arg value="${facebook.clientSecret}"/>
 					<constructor-arg ref="preference.store"/>
@@ -97,7 +108,8 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
 				</bean>
 			</list>
 		</property>
-		
+		 -->
+		 
 		<property name="streamPublishSecurityList">
 			<list>
 				<ref bean="acceptOnlyStreamsInDataStore"/>
