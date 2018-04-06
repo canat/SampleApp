@@ -72,6 +72,9 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
       	<property name="youtubeClientId" value="${youtube.clientId}" />
       	<property name="youtubeClientSecret" value="${youtube.clientSecret}" />
       	
+      	<property name="objectDetectionDir" value="${settings.objectDetectionModelDir}" />
+      	
+      	<property name="createPreviewPeriod" value="${settings.createPreviewPeriod}" />      	
 		
 	</bean>
 	
