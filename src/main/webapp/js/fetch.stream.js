@@ -42,6 +42,8 @@ function tryToPlay(name)
 						else {
 							console.log("No stream found");
 							setTimeout(function() { tryToPlay(name); }, 5000);
+							document.getElementById("video_info").innerHTML="Stream will start playing automatically<br/>when it is live";
+							
 
 						}
 					}).catch(function(err) {
