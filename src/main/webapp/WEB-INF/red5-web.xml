@@ -72,6 +72,8 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
       	<property name="youtubeClientId" value="${youtube.clientId}" />
       	<property name="youtubeClientSecret" value="${youtube.clientSecret}" />
       	
+      	<property name="previewOverwrite" value="${settings.previewOverwrite}" />
+       	
 		
 	</bean>
 	
