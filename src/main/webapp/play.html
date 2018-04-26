@@ -70,7 +70,8 @@ pageEncoding="UTF-8"%>
 		    }
 		  });
 		
-		document.getElementById("video_info").innerHTML = "";
+		document.getElementById("video_container").style.display = "block";
+		document.getElementById("video_info").hidden = true;
 		flowplayer(function (api, root) {
 
 			  api.on("error", function (error) {
