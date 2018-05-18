@@ -15,5 +15,6 @@ body {
 	text-align:center;
 	font-size:36px;
 	font-family:sans-serif;
-	line-height:45px
+	line-height:45px;
+	height:100%;
 }

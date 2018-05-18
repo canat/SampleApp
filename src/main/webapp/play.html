@@ -20,73 +20,75 @@ pageEncoding="UTF-8"%>
 <link href="css/player.css" rel="stylesheet">
 </head>
 <body>
-	<div id="video_info">Stream will start playing automatically<br/>when it is live</div>
-	<div id="video-player" class="fp-slim" >
+	<div id="video_info">
 	</div>
-	
+	<div style="width: 100%; max-width: 960px;" id="video_container">
+		<div id="video-player" class="fp-slim"></div>
+	</div>
+
 	<script>
+		var name = "<%= request.getParameter("name") %>";
 
-	var name = "<%= request.getParameter("name") %>";
-	
-	var pAutoplay = "<%= request.getParameter("autoplay") %>";
-	var autoPlay = false;
-	if (pAutoplay == "true" && !isMobile()) {
-		autoPlay = true;
-	}
-	
-	function initializePlayer(name, extension) {
-		var type;
-		var liveStream = false;
-		if (extension == "mp4") {
-			type = "video/mp4";
-			liveStream = false;
+		var pAutoplay = "<%= request.getParameter("autoplay") %>";
+		var autoPlay = false;
+		if (pAutoplay == "true" && !isMobile()) {
+			autoPlay = true;
 		}
-		else if (extension == "m3u8") {
-			type = "application/x-mpegurl";
-			liveStream = true;
-		}
-		else {
-			console.log("Unknown extension: " + extension);
-			return;
-		}
-		
-		var preview = name;
-		if (name.endsWith("_adaptive")) {
-			preview = name.substring(0, name.indexOf("_adaptive"));
-		}
-		
-		flowplayer("#video-player", {
-			poster: "previews/" + preview + ".png",
-			autoplay: autoPlay,
-		    ratio: 9/16,
-		    fullscreen: true,
-            native_fullscreen: true,
-		    clip: {
-		    	  live: liveStream,
-		      sources: [
-		        { type: type,
-		          src: "streams/"+ name +"." + extension } 
-		      ]
-		    }
-		  });
-		
-		document.getElementById("video_info").innerHTML = "";
-		flowplayer(function (api, root) {
 
-			  api.on("error", function (error) {
+		function initializePlayer(name, extension) {
+			var type;
+			var liveStream = false;
+			if (extension == "mp4") {
+				type = "video/mp4";
+				liveStream = false;
+			} else if (extension == "m3u8") {
+				type = "application/x-mpegurl";
+				liveStream = true;
+			} else {
+				console.log("Unknown extension: " + extension);
+				return;
+			}
 
-				   	if (error.code == 4) {
-				   		setTimeout(function() { initializePlayer(name, extension); }, 3000);
-				   	}
+			var preview = name;
+			if (name.endsWith("_adaptive")) {
+				preview = name.substring(0, name.indexOf("_adaptive"));
+			}
 
-			  });
+			flowplayer("#video-player", {
+				poster : "previews/" + preview + ".png",
+				autoplay : autoPlay,
+				ratio : 9 / 16,
+				fullscreen : true,
+				native_fullscreen : true,
+				clip : {
+					live : liveStream,
+					sources : [ {
+						type : type,
+						src : "streams/" + name + "." + extension
+					} ]
+				}
+			});
+
+			document.getElementById("video_container").style.display = "block";
+			document.getElementById("video_info").hidden = true;
+			flowplayer(function(api, root) {
+
+				api.on("error", function(error) {
+
+					if (error.code == 4) {
+						setTimeout(function() {
+							initializePlayer(name, extension);
+						}, 3000);
+					}
+
+				});
 
 			});
-		
-	}
-	
-	tryToPlay(name);
-</script>
+
+		}
+
+		tryToPlay(name);
+	</script>
 
 </body>
 </html>

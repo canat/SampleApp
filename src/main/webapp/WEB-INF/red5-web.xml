@@ -72,10 +72,18 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
       	<property name="youtubeClientId" value="${youtube.clientId}" />
       	<property name="youtubeClientSecret" value="${youtube.clientSecret}" />
       	
+
       	<property name="objectDetectionDir" value="${settings.objectDetectionModelDir}" />
       	
       	<property name="createPreviewPeriod" value="${settings.createPreviewPeriod}" />      	
+
+      	<property name="previewOverwrite" value="${settings.previewOverwrite}" />
+		<property name="vodFolder" value="${settings.vodFolder}" />
+
 		
+		<property name="stalkerDBServer" value="${settings.stalkerDBServer}" />
+		<property name="stalkerDBUsername" value="${settings.stalkerDBUsername}" />
+		<property name="stalkerDBPassword" value="${settings.stalkerDBPassword}" />
 	</bean>
 	
 	
@@ -90,28 +98,6 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
 	-->
 	<bean id="web.handler" class="io.antmedia.serverapp.pscp.Application" >
 		<property name="appSettings" ref="app.settings" />
-		<!-- 
-		<property name="videoServiceEndpoints">
-			<list>
-				<bean class="#{ T(io.antmedia.rest.BroadcastRestService).isEnterprise() ? 'io.antmedia.enterprise.social.endpoint.FacebookEndpoint' : 'io.antmedia.social.endpoint.FakeEndpoint' }" 
-						init-method="start">
-					<constructor-arg value="${facebook.clientId}"/>
-					<constructor-arg value="${facebook.clientSecret}"/>
-					<constructor-arg ref="preference.store"/>
-				</bean>
-				<bean class="io.antmedia.social.endpoint.PeriscopeEndpoint" init-method="start">
-					<constructor-arg value="${periscope.clientId}"/>
-					<constructor-arg value="${periscope.clientSecret}"/>
-					<constructor-arg ref="preference.store"/>
-				</bean>
-				<bean class="#{ T(io.antmedia.rest.BroadcastRestService).isEnterprise() ? 'io.antmedia.enterprise.social.endpoint.YoutubeEndpoint' : 'io.antmedia.social.endpoint.FakeEndpoint' }" init-method="start">
-					<constructor-arg value="${youtube.clientId}"/>
-					<constructor-arg value="${youtube.clientSecret}"/>
-					<constructor-arg ref="preference.store"/>
-				</bean>
-			</list>
-		</property>
-		 -->
 		 
 		<property name="streamPublishSecurityList">
 			<list>

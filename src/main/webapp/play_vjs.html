@@ -10,9 +10,8 @@ pageEncoding="UTF-8"%>
 <link href="css/player.css" rel="stylesheet">
 </head>
 
-<body >
-	<div id="video_info" >
-	Stream will start playing automatically<br/>when it is live</div>
+<body>
+	<div id="video_info"></div>
 	<div style="width: 100%; max-width: 960px;" id="video_container">
 		<video id="video-player"
 			class="video-js vjs-default-skin vjs-16-9 vjs-big-play-centered"
@@ -64,6 +63,8 @@ pageEncoding="UTF-8"%>
   			src: "streams/"+ name +"." + extension,
   			type: type,
 		});
+		
+		player.poster("previews/"+preview+".png");
 
 		if (autoPlay) {
 			player.play();
@@ -84,6 +85,8 @@ pageEncoding="UTF-8"%>
 	
 
 	tryToPlay(name);
+
+	
 	</script>
 </body>
 </html>
