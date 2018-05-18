@@ -2,7 +2,7 @@
 
 mvn clean install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -DskipITs -Dgpg.skip=true
 
-USER_HOME_DIR=/Users/mekya
+USER_HOME_DIR=/Users/mypc
 
 SRC=target/LiveApp.war
 
