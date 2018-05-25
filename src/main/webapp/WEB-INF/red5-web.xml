@@ -84,6 +84,8 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
 		<property name="stalkerDBServer" value="${settings.stalkerDBServer}" />
 		<property name="stalkerDBUsername" value="${settings.stalkerDBUsername}" />
 		<property name="stalkerDBPassword" value="${settings.stalkerDBPassword}" />
+		
+		<property name="restartStreamFetcherPeriod" value="${settings.streamFetcherRestartPeriod}" />
 	</bean>
 	
 	
