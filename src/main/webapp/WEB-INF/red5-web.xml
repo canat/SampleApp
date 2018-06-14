@@ -95,6 +95,9 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
 			<property name="enabled" value="${settings.acceptOnlyStreamsInDataStore}" />
 	</bean>
 	
+	
+	<bean id="hls.viewerstats" class="io.antmedia.statistic.HlsViewerStats" />
+	
 	 
 	<!--
 	Defines the web handler which acts as an applications endpoint

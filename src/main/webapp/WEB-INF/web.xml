@@ -59,6 +59,14 @@
 		<url-pattern>/rest/*</url-pattern>
 	</filter-mapping>
 	
+	<filter>
+		<filter-name>HlsStatisticsFilter</filter-name>
+		<filter-class>io.antmedia.filter.HlsStatisticsFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>HlsStatisticsFilter</filter-name>
+		<url-pattern>*.m3u8</url-pattern>
+	</filter-mapping>
 	
 	<servlet-mapping>
 		<servlet-name>jsp</servlet-name>
