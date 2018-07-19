@@ -60,12 +60,23 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
       	<property name="youtubeClientId" value="${youtube.clientId}" />
       	<property name="youtubeClientSecret" value="${youtube.clientSecret}" />
       	
+
+      	<property name="objectDetectionEnabled" value="${settings.objectDetectionEnabled}" />      	
+      	<property name="createPreviewPeriod" value="${settings.createPreviewPeriod}" />      	
+
+
       	<property name="previewOverwrite" value="${settings.previewOverwrite}" />
 		<property name="vodFolder" value="${settings.vodFolder}" />
 		
 		<property name="stalkerDBServer" value="${settings.stalkerDBServer}" />
 		<property name="stalkerDBUsername" value="${settings.stalkerDBUsername}" />
 		<property name="stalkerDBPassword" value="${settings.stalkerDBPassword}" />
+
+		<property name="restartStreamFetcherPeriod" value="${settings.streamFetcherRestartPeriod}" />
+		<!--  
+		<property name="streamFetcherBufferTime" value="${settings.streamFetcherBufferTime}" />
+		 -->
+
 	</bean>
 	
 	
@@ -82,7 +93,9 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
 			<property name="enabled" value="${settings.acceptOnlyStreamsInDataStore}" />
 			<property name="dataStoreFactory" ref="dataStoreFactory" />
 	</bean>
-	 
+
+	<bean id="hls.viewerstats" class="io.antmedia.statistic.HlsViewerStats" />
+		 
 	<!--
 	Defines the web handler which acts as an applications endpoint
 	-->
