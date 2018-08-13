@@ -98,6 +98,14 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
 	
 	<bean id="hls.viewerstats" class="io.antmedia.statistic.HlsViewerStats" />
 	
+	<!-- 
+<bean id="app.storageClient" class="io.antmedia.storage.AmazonS3StorageClient">
+    <property name="accessKey" value="Enter your S3_ACCESS_KEY" />
+    <property name="secretKey" value="Enter your S3_SECRET_KEY" />
+    <property name="region" value="Enter your REGION_NAME e.g. eu-central-1" />
+    <property name="storageName" value="Enter your BUCKET_NAME" />
+</bean>
+	 -->
 	 
 	<!--
 	Defines the web handler which acts as an applications endpoint
