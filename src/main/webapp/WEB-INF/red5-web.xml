@@ -97,6 +97,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
 	
 	
 	<bean id="hls.viewerstats" class="io.antmedia.statistic.HlsViewerStats" />
+	<bean id="token.filter" class="io.antmedia.statistic.TokenFilter" />
 	
 	<!-- 
 <bean id="app.storageClient" class="io.antmedia.storage.AmazonS3StorageClient">
