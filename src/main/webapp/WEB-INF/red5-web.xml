@@ -84,6 +84,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
 		<property name="stalkerDBPassword" value="${settings.stalkerDBPassword}" />
 		
 		<property name="restartStreamFetcherPeriod" value="${settings.streamFetcherRestartPeriod}" />
+		<property name="tokenControlEnabled" value="${settings.tokenControlEnabled}" />
 		<!--  
 		<property name="streamFetcherBufferTime" value="${settings.streamFetcherBufferTime}" />
 		 -->
@@ -97,7 +98,8 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
 	
 	
 	<bean id="hls.viewerstats" class="io.antmedia.statistic.HlsViewerStats" />
-	<bean id="token.filter" class="io.antmedia.statistic.TokenFilter" />
+	<bean id="token.service" class="io.antmedia.token.TokenService" />
+
 	
 	<!-- 
 <bean id="app.storageClient" class="io.antmedia.storage.AmazonS3StorageClient">
