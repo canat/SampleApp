@@ -34,7 +34,7 @@ pageEncoding="UTF-8"%>
 
 	<script>
 	
-	function initializePlayer(name, extension) {
+	function initializePlayer(name, extension, token) {
 		var type;
 		var liveStream = false;
 		if (extension == "mp4") {
@@ -60,7 +60,7 @@ pageEncoding="UTF-8"%>
 		});
 
 		player.src({
-  			src: "streams/"+ name +"." + extension,
+  			src: "streams/" + name + "." + extension + "?token=" + token,
   			type: type,
 		});
 		
@@ -75,6 +75,7 @@ pageEncoding="UTF-8"%>
 
 
 	var name = "<%= request.getParameter("name") %>";
+	var token = "<%= request.getParameter("token") %>";
 
 	var pAutoplay = "<%= request.getParameter("autoplay") %>";
 	var autoPlay = false;
@@ -84,7 +85,7 @@ pageEncoding="UTF-8"%>
 	
 	
 
-	tryToPlay(name);
+	tryToPlay(name, token);
 
 	
 	</script>

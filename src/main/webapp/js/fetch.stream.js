@@ -14,13 +14,13 @@ if (!String.prototype.endsWith)
 }
 
 
-function tryToPlay(name) 
+function tryToPlay(name, token) 
 {
 	fetch("streams/"+ name +"_adaptive.m3u8", {method:'HEAD'})
 	.then(function(response) {
 		if (response.status == 200) {
 			// adaptive m3u8 exists,play it
-			initializePlayer(name+"_adaptive", "m3u8");
+			initializePlayer(name+"_adaptive", "m3u8", token);
 		}
 		else 
 		{
@@ -29,7 +29,7 @@ function tryToPlay(name)
 			.then(function(response) {
 				if (response.status == 200) {
 					//m3u8 exists, play it
-					initializePlayer(name, "m3u8");
+					initializePlayer(name, "m3u8", token);
 				}
 				else {
 					//no m3u8 exists, try vod file
@@ -37,7 +37,7 @@ function tryToPlay(name)
 					.then(function(response) {
 						if (response.status == 200) {
 							//mp4 exists, play it
-							initializePlayer(name, "mp4");
+							initializePlayer(name, "mp4", token);
 						}
 						else {
 							console.log("No stream found");
