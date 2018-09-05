@@ -119,6 +119,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
 		<property name="streamPublishSecurityList">
 			<list>
 				<ref bean="acceptOnlyStreamsInDataStore"/>
+				<ref bean="token.service"/>
 				<bean class="io.antmedia.security.ExpireStreamPublishSecurity" >
 					<property name="dataStore"  ref="db.datastore"/>
 				</bean>
