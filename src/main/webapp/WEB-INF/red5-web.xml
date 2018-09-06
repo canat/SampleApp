@@ -98,7 +98,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
 	
 	
 	<bean id="hls.viewerstats" class="io.antmedia.statistic.HlsViewerStats" />
-	<bean id="token.service" class="io.antmedia.token.TokenService" />
+	<bean id="token.service" class="io.antmedia.security.TokenService" />
 
 	
 	<!-- 
