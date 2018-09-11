@@ -73,6 +73,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
 		<property name="stalkerDBPassword" value="${settings.stalkerDBPassword}" />
 
 		<property name="restartStreamFetcherPeriod" value="${settings.streamFetcherRestartPeriod}" />
+		<property name="tokenControlEnabled" value="${settings.tokenControlEnabled}" />
 		<!--  
 		<property name="streamFetcherBufferTime" value="${settings.streamFetcherBufferTime}" />
 		 -->
@@ -96,6 +97,8 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
 
 	<bean id="hls.viewerstats" class="io.antmedia.statistic.HlsViewerStats" />
 
+	<bean id="token.service" class="io.antmedia.security.TokenService" />
+
 	
 	<!-- 
 <bean id="app.storageClient" class="io.antmedia.storage.AmazonS3StorageClient">
@@ -115,6 +118,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
 		<property name="streamPublishSecurityList">
 			<list>
 				<ref bean="acceptOnlyStreamsInDataStore"/>
+				<ref bean="token.service"/>
 				<bean class="io.antmedia.security.ExpireStreamPublishSecurity" >
 					<property name="dataStoreFactory" ref="dataStoreFactory" />
 				</bean>

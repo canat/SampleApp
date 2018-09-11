@@ -28,14 +28,15 @@ pageEncoding="UTF-8"%>
 
 	<script>
 		var name = "<%= request.getParameter("name") %>";
-
+		var token = "<%= request.getParameter("token") %>";
+		
 		var pAutoplay = "<%= request.getParameter("autoplay") %>";
 		var autoPlay = false;
 		if (pAutoplay == "true" && !isMobile()) {
 			autoPlay = true;
 		}
 
-		function initializePlayer(name, extension) {
+		function initializePlayer(name, extension, token) {
 			var type;
 			var liveStream = false;
 			if (extension == "mp4") {
@@ -64,7 +65,7 @@ pageEncoding="UTF-8"%>
 					live : liveStream,
 					sources : [ {
 						type : type,
-						src : "streams/" + name + "." + extension
+						src : "streams/" + name + "." + extension + "?token=" + token
 					} ]
 				},
 				hlsjs: {
@@ -78,7 +79,7 @@ pageEncoding="UTF-8"%>
 
 		}
 
-		tryToPlay(name);
+		tryToPlay(name, token);
 	</script>
 
 </body>

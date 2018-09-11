@@ -45,6 +45,7 @@ pageEncoding="UTF-8"%>
     <script>
     var stretching =  'auto';
     	var name = "<%= request.getParameter("name") %>";
+    	var token = "<%= request.getParameter("token") %>";
     	
     	var pAutoplay = "<%= request.getParameter("autoplay") %>";
     	var autoPlay = false;
@@ -52,7 +53,7 @@ pageEncoding="UTF-8"%>
     		autoPlay = true;
     	}
     	
-    	function initializePlayer(name, extension) {
+    	function initializePlayer(name, extension, token) {
     		var type;
     		var liveStream = false;
     		if (extension == "mp4") {
@@ -86,7 +87,7 @@ pageEncoding="UTF-8"%>
     				
     			}
     		});
-        mjsPlayer.src = "streams/"+ name +"." + extension;
+        mjsPlayer.src = "streams/" + name + "." + extension + "?token=" + token;
         mjsPlayer.setPoster("previews/" + preview + ".png");
         
         if (autoPlay) {
@@ -98,7 +99,7 @@ pageEncoding="UTF-8"%>
     		
     	}
     	
-    	tryToPlay(name);
+    	tryToPlay(name, token);
      
     </script>
 </body>
