@@ -81,7 +81,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
 	</bean>
 	
 	
-	<bean id="dataStoreFactory" class="io.antmedia.datastore.db.DataStoreFactory">
+	<bean id="dataStoreFactory" class="io.antmedia.datastore.db.DataStoreFactory" init-method="init>
 		<property name="appName" value="${db.app.name}" />
 		<property name="dbName" value="${db.name}" />
 		<property name="dbType" value="${db.type}" />
