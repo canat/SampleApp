@@ -32,6 +32,7 @@ public class Application extends AntMediaApplicationAdapter {
 
 	@Override
 	public boolean appStart(IScope app) {
+		System.out.println("\n\n\n"+app+"\n\n\n");
 		return super.appStart(app);
 	}
 
