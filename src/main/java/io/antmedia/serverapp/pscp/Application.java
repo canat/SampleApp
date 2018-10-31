@@ -24,16 +24,4 @@ public class Application extends AntMediaApplicationAdapter {
 		return true;
 	}
 
-	/** {@inheritDoc} */
-	@Override
-	public void disconnect(IConnection conn, IScope scope) {
-		super.disconnect(conn, scope);
-	}
-
-	@Override
-	public boolean appStart(IScope app) {
-		System.out.println("\n\n\n"+app+"\n\n\n");
-		return super.appStart(app);
-	}
-
 }
