@@ -12,6 +12,9 @@
 		<listener-class>org.red5.logging.ContextLoggingListener
 		</listener-class>
 	</listener>
+	<listener>
+        <listener-class>io.antmedia.filter.TokenFilter</listener-class>
+    </listener>
 	<filter>
 		<filter-name>LoggerContextFilter</filter-name>
 		<filter-class>org.red5.logging.LoggerContextFilter</filter-class>
