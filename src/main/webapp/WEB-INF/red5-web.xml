@@ -97,7 +97,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
 
 	<bean id="hls.viewerstats" class="io.antmedia.statistic.HlsViewerStats" />
 
-	<bean id="token.service" class="io.antmedia.security.TokenService" />
+<!--  	<bean id="token.service" class="io.antmedia.security.TokenService" />-->
 
 	
 	<!-- 
@@ -118,7 +118,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
 		<property name="streamPublishSecurityList">
 			<list>
 				<ref bean="acceptOnlyStreamsInDataStore"/>
-				<ref bean="token.service"/>
+			<!--  	<ref bean="tokenService"/> -->
 				<bean class="io.antmedia.security.ExpireStreamPublishSecurity" >
 					<property name="dataStoreFactory" ref="dataStoreFactory" />
 				</bean>
