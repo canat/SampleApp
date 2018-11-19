@@ -1,28 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" 
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-xmlns:context="http://www.springframework.org/schema/context"
-xsi:schemaLocation="http://www.springframework.org/schema/beans
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
 	http://www.springframework.org/schema/beans/spring-beans-4.3.xsd 
 	http://www.springframework.org/schema/context
 	http://www.springframework.org/schema/context/spring-context-4.3.xsd">
 
-	<!--
-	Defines a properties file for dereferencing variables
-	-->
-	<bean id="placeholderConfig" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-	    <property name="location" value="/WEB-INF/red5-web.properties" />
+	<!-- Defines a properties file for dereferencing variables -->
+	<bean id="placeholderConfig"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location"
+			value="/WEB-INF/red5-web.properties" />
 	</bean>
-	
-	<!--
-	Defines the web context
-	-->
-	<bean id="web.context" class="org.red5.server.Context" 
+
+	<!-- Defines the web context -->
+	<bean id="web.context" class="org.red5.server.Context"
 		autowire="byType" />
-	
-	<!--
-	Defines the web scopes
-	-->
+
+	<!-- Defines the web scopes -->
 	<bean id="web.scope" class="org.red5.server.scope.WebScope">
 		<property name="server" ref="red5.server" />
 		<property name="parent" ref="global.scope" />
@@ -31,57 +27,80 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
 		<property name="contextPath" value="${webapp.contextPath}" />
 		<property name="virtualHosts" value="${webapp.virtualHosts}" />
 	</bean>
-	
-	<context:component-scan base-package="io.antmedia.rest" />
-	
-	<bean id="preference.store" class="io.antmedia.datastore.preference.PreferenceStore">
+
+	<context:component-scan
+		base-package="io.antmedia.rest" />
+
+	<bean id="preference.store"
+		class="io.antmedia.datastore.preference.PreferenceStore">
 		<constructor-arg value="/WEB-INF/red5-web.properties" />
 	</bean>
-	
-	<bean id="app.settings" class="io.antmedia.AppSettings" >
-		<property name="mp4MuxingEnabled" value="${settings.mp4MuxingEnabled}" />
-		<property name="addDateTimeToMp4FileName" value="${settings.addDateTimeToMp4FileName}" />
-		<property name="encoderSettingsString" value="${settings.encoderSettingsString}" />
-		
-      	<property name="hlsMuxingEnabled" value="${settings.hlsMuxingEnabled}" />
-     	<property name="hlsListSize" value="${settings.hlsListSize}" />
-      	<property name="hlsTime" value="${settings.hlsTime}" />
-      	<property name="hlsPlayListType" value="${settings.hlsPlayListType}" />
-      	<property name="deleteHLSFilesOnEnded" value="${settings.deleteHLSFilesOnEnded}" />
-      	<property name="serverName" value="#{ @'ant.media.server.settings'.serverName }" />
-      	<property name="acceptOnlyStreamsInDataStore" value="${settings.acceptOnlyStreamsInDataStore}" />
-      	
-      	<property name="facebookClientId" value="${facebook.clientId}" />
-      	<property name="facebookClientSecret" value="${facebook.clientSecret}" />
-      	
-      	<property name="periscopeClientId" value="${periscope.clientId}" />
-      	<property name="periscopeClientSecret" value="${periscope.clientSecret}" />
-      	
-      	<property name="youtubeClientId" value="${youtube.clientId}" />
-      	<property name="youtubeClientSecret" value="${youtube.clientSecret}" />
-      	
 
-      	<property name="objectDetectionEnabled" value="${settings.objectDetectionEnabled}" />      	
-      	<property name="createPreviewPeriod" value="${settings.createPreviewPeriod}" />      	
+	<bean id="app.settings" class="io.antmedia.AppSettings">
+		<property name="mp4MuxingEnabled"
+			value="${settings.mp4MuxingEnabled}" />
+		<property name="addDateTimeToMp4FileName"
+			value="${settings.addDateTimeToMp4FileName}" />
+		<property name="encoderSettingsString"
+			value="${settings.encoderSettingsString}" />
+
+		<property name="hlsMuxingEnabled"
+			value="${settings.hlsMuxingEnabled}" />
+		<property name="hlsListSize" value="${settings.hlsListSize}" />
+		<property name="hlsTime" value="${settings.hlsTime}" />
+		<property name="hlsPlayListType"
+			value="${settings.hlsPlayListType}" />
+		<property name="deleteHLSFilesOnEnded"
+			value="${settings.deleteHLSFilesOnEnded}" />
+		<property name="serverName"
+			value="#{ @'ant.media.server.settings'.serverName }" />
+		<property name="acceptOnlyStreamsInDataStore"
+			value="${settings.acceptOnlyStreamsInDataStore}" />
+
+		<property name="facebookClientId"
+			value="${facebook.clientId}" />
+		<property name="facebookClientSecret"
+			value="${facebook.clientSecret}" />
+
+		<property name="periscopeClientId"
+			value="${periscope.clientId}" />
+		<property name="periscopeClientSecret"
+			value="${periscope.clientSecret}" />
+
+		<property name="youtubeClientId" value="${youtube.clientId}" />
+		<property name="youtubeClientSecret"
+			value="${youtube.clientSecret}" />
 
 
-      	<property name="previewOverwrite" value="${settings.previewOverwrite}" />
+		<property name="objectDetectionEnabled"
+			value="${settings.objectDetectionEnabled}" />
+		<property name="createPreviewPeriod"
+			value="${settings.createPreviewPeriod}" />
+
+
+		<property name="previewOverwrite"
+			value="${settings.previewOverwrite}" />
 		<property name="vodFolder" value="${settings.vodFolder}" />
-		
-		<property name="stalkerDBServer" value="${settings.stalkerDBServer}" />
-		<property name="stalkerDBUsername" value="${settings.stalkerDBUsername}" />
-		<property name="stalkerDBPassword" value="${settings.stalkerDBPassword}" />
 
-		<property name="restartStreamFetcherPeriod" value="${settings.streamFetcherRestartPeriod}" />
-		<property name="tokenControlEnabled" value="${settings.tokenControlEnabled}" />
-		<!--  
-		<property name="streamFetcherBufferTime" value="${settings.streamFetcherBufferTime}" />
-		 -->
+		<property name="stalkerDBServer"
+			value="${settings.stalkerDBServer}" />
+		<property name="stalkerDBUsername"
+			value="${settings.stalkerDBUsername}" />
+		<property name="stalkerDBPassword"
+			value="${settings.stalkerDBPassword}" />
+
+		<property name="restartStreamFetcherPeriod"
+			value="${settings.streamFetcherRestartPeriod}" />
+		<property name="tokenControlEnabled"
+			value="${settings.tokenControlEnabled}" />
+		<!-- <property name="streamFetcherBufferTime" value="${settings.streamFetcherBufferTime}" 
+			/> -->
 
 	</bean>
-	
-	
-	<bean id="dataStoreFactory" class="io.antmedia.datastore.db.DataStoreFactory">
+
+
+	<bean id="dataStoreFactory"
+		class="io.antmedia.datastore.db.DataStoreFactory">
 		<property name="appName" value="${db.app.name}" />
 		<property name="dbName" value="${db.name}" />
 		<property name="dbType" value="${db.type}" />
@@ -89,52 +108,50 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
 		<property name="dbUser" value="${db.user}" />
 		<property name="dbPassword" value="${db.password}" />
 	</bean>
-	
-	<bean id="acceptOnlyStreamsInDataStore" class="io.antmedia.security.AcceptOnlyStreamsInDataStore">
-			<property name="enabled" value="${settings.acceptOnlyStreamsInDataStore}" />
-			<property name="dataStoreFactory" ref="dataStoreFactory" />
+
+	<bean id="acceptOnlyStreamsInDataStore"
+		class="io.antmedia.security.AcceptOnlyStreamsInDataStore">
+		<property name="enabled"
+			value="${settings.acceptOnlyStreamsInDataStore}" />
+		<property name="dataStoreFactory" ref="dataStoreFactory" />
 	</bean>
 
-	<bean id="hls.viewerstats" class="io.antmedia.statistic.HlsViewerStats" />
+	<bean id="hls.viewerstats"
+		class="io.antmedia.statistic.HlsViewerStats" />
 
-	<bean id="token.service" class="io.antmedia.security.TokenService" />
 
-	
-	<!-- 
-<bean id="app.storageClient" class="io.antmedia.storage.AmazonS3StorageClient">
-    <property name="accessKey" value="Enter your S3_ACCESS_KEY" />
-    <property name="secretKey" value="Enter your S3_SECRET_KEY" />
-    <property name="region" value="Enter your REGION_NAME e.g. eu-central-1" />
-    <property name="storageName" value="Enter your BUCKET_NAME" />
-</bean>
-	 -->
-	 
-	<!--
-	Defines the web handler which acts as an applications endpoint
-	-->
-	<bean id="web.handler" class="io.antmedia.serverapp.pscp.Application" >
+
+	<bean id="token.service"
+		class="#{ T(io.antmedia.rest.BroadcastRestService).isEnterprise() ? 'io.antmedia.enterprise.security.TokenService' : 'io.antmedia.security.MockTokenService' }">
+
+	</bean>
+
+
+	<!-- <bean id="app.storageClient" class="io.antmedia.storage.AmazonS3StorageClient"> 
+		<property name="accessKey" value="Enter your S3_ACCESS_KEY" /> <property 
+		name="secretKey" value="Enter your S3_SECRET_KEY" /> <property name="region" 
+		value="Enter your REGION_NAME e.g. eu-central-1" /> <property name="storageName" 
+		value="Enter your BUCKET_NAME" /> </bean> -->
+
+	<!-- Defines the web handler which acts as an applications endpoint -->
+	<bean id="web.handler"
+		class="io.antmedia.serverapp.pscp.Application">
 		<property name="appSettings" ref="app.settings" />
 		<property name="dataStoreFactory" ref="dataStoreFactory" />
 		<property name="streamPublishSecurityList">
 			<list>
-				<ref bean="acceptOnlyStreamsInDataStore"/>
-				<ref bean="token.service"/>
-				<bean class="io.antmedia.security.ExpireStreamPublishSecurity" >
+				<ref bean="acceptOnlyStreamsInDataStore" />
+				<ref bean="token.service"/> 
+				<bean class="io.antmedia.security.ExpireStreamPublishSecurity">
 					<property name="dataStoreFactory" ref="dataStoreFactory" />
 				</bean>
 			</list>
 		</property>
 	</bean>
-	<!-- 
-   <bean id="exporter" class="org.springframework.jmx.export.MBeanExporter" lazy-init="false">
-    <property name="beans">
-      <map>
-        <entry key="bean:name=appSettingsBeanPSCP" value-ref="app.settings"/>
-      </map>
-    </property>
-  </bean>
-	 -->
+	<!-- <bean id="exporter" class="org.springframework.jmx.export.MBeanExporter" 
+		lazy-init="false"> <property name="beans"> <map> <entry key="bean:name=appSettingsBeanPSCP" 
+		value-ref="app.settings"/> </map> </property> </bean> -->
 
-	
- 
+
+
 </beans>
