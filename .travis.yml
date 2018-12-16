@@ -46,4 +46,4 @@ deploy:
   skip_cleanup: true
   on:
     tags: true
-    branch: master
+    condition: $TRAVIS_BRANCH =~ ^release
