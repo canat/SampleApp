@@ -35,7 +35,7 @@
 		class="io.antmedia.datastore.preference.PreferenceStore">
 		<constructor-arg value="/WEB-INF/red5-web.properties" />
 	</bean>
-
+	 
 	<bean id="app.settings" class="io.antmedia.AppSettings">
 	</bean>
 
@@ -64,7 +64,6 @@
 
 	<bean id="token.service"
 		class="#{ T(io.antmedia.rest.BroadcastRestService).isEnterprise() ? 'io.antmedia.enterprise.security.TokenService' : 'io.antmedia.security.MockTokenService' }">
-
 	</bean>
 
 
@@ -89,9 +88,7 @@
 			</list>
 		</property>
 	</bean>
-	<!-- <bean id="exporter" class="org.springframework.jmx.export.MBeanExporter" 
-		lazy-init="false"> <property name="beans"> <map> <entry key="bean:name=appSettingsBeanPSCP" 
-		value-ref="app.settings"/> </map> </property> </bean> -->
+
 
 
 
