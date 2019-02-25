@@ -9,8 +9,7 @@
 		<param-value>/LiveApp</param-value>
 	</context-param>
 	<listener>
-		<listener-class>org.red5.logging.ContextLoggingListener
-		</listener-class>
+		<listener-class>org.red5.logging.ContextLoggingListener</listener-class>
 	</listener>
     <listener>
         <listener-class>io.antmedia.filter.TokenSessionFilter</listener-class>
@@ -55,7 +54,7 @@
 	</servlet-mapping>
 	<filter>
 		<filter-name>RestAuthenticationFiler</filter-name>
-		<filter-class>io.antmedia.serverapp.pscp.filter.RestAuthenticationFilter</filter-class>
+		<filter-class>io.antmedia.filter.IPFilter</filter-class>
 	</filter>
 	<filter-mapping>
 		<filter-name>RestAuthenticationFiler</filter-name>
@@ -93,25 +92,15 @@
 	<filter>
 		<filter-name>CorsFilter</filter-name>
 		<filter-class>org.apache.catalina.filters.CorsFilter</filter-class>
+		<init-param>
+		    <param-name>cors.allowed.origins</param-name>
+		    <param-value>*</param-value>
+		 </init-param>
 	</filter>
 	<filter-mapping>
 		<filter-name>CorsFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
-	<filter>
-		<filter-name>HttpForwardFilter</filter-name>
-		<filter-class>io.antmedia.serverapp.pscp.filter.HttpForwardFilter
-		</filter-class>
-	</filter>
-	<filter-mapping>
-		<filter-name>HttpForwardFilter</filter-name>
-		<url-pattern>/streams/*</url-pattern>
-	</filter-mapping>
-	<filter-mapping>
-		<filter-name>HttpForwardFilter</filter-name>
-		<url-pattern>/previews/*</url-pattern>
-	</filter-mapping>
-
 
 	<mime-mapping>
 		<extension>m3u8</extension>
