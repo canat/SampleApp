@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:web="http://java.sun.com/xml/ns/javaee"
+	xmlns="http://java.sun.com/xml/ns/j2ee"
+	xmlns:web="http://java.sun.com/xml/ns/javaee"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
 	version="3.0">
 	<display-name>LiveApp</display-name>
@@ -9,11 +10,12 @@
 		<param-value>/LiveApp</param-value>
 	</context-param>
 	<listener>
-		<listener-class>org.red5.logging.ContextLoggingListener</listener-class>
+		<listener-class>org.red5.logging.ContextLoggingListener
+		</listener-class>
 	</listener>
-    <listener>
-        <listener-class>io.antmedia.filter.TokenSessionFilter</listener-class>
-    </listener>
+	<listener>
+		<listener-class>io.antmedia.filter.TokenSessionFilter</listener-class>
+	</listener>
 	<filter>
 		<filter-name>LoggerContextFilter</filter-name>
 		<filter-class>org.red5.logging.LoggerContextFilter</filter-class>
@@ -42,10 +44,11 @@
 			<param-name>jersey.config.server.provider.packages</param-name>
 			<param-value>io.antmedia.rest</param-value>
 		</init-param>
-		  <init-param>
-      		  <param-name>jersey.config.server.provider.classnames</param-name>
-        	<param-value>org.glassfish.jersey.media.multipart.MultiPartFeature</param-value>
-   		 </init-param>
+		<init-param>
+			<param-name>jersey.config.server.provider.classnames</param-name>
+			<param-value>org.glassfish.jersey.media.multipart.MultiPartFeature
+			</param-value>
+		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet-mapping>
@@ -60,7 +63,7 @@
 		<filter-name>RestAuthenticationFiler</filter-name>
 		<url-pattern>/rest/*</url-pattern>
 	</filter-mapping>
-	 
+
 	<filter>
 		<filter-name>TokenFilter</filter-name>
 		<filter-class>io.antmedia.filter.TokenFilterManager</filter-class>
@@ -69,13 +72,13 @@
 		<filter-name>TokenFilter</filter-name>
 		<url-pattern>*.m3u8</url-pattern>
 	</filter-mapping>
-	
+
 	<filter-mapping>
 		<filter-name>TokenFilter</filter-name>
 		<url-pattern>*.mp4</url-pattern>
 	</filter-mapping>
 
-	
+
 	<filter>
 		<filter-name>HlsStatisticsFilter</filter-name>
 		<filter-class>io.antmedia.filter.HlsStatisticsFilter</filter-class>
@@ -84,7 +87,7 @@
 		<filter-name>HlsStatisticsFilter</filter-name>
 		<url-pattern>*.m3u8</url-pattern>
 	</filter-mapping>
-	
+
 	<servlet-mapping>
 		<servlet-name>jsp</servlet-name>
 		<url-pattern>*.html</url-pattern>
